@@ -21,6 +21,7 @@
          	,	b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
          	,	b2DebugDraw = Box2D.Dynamics.b2DebugDraw
             ,  b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef
+            ,   b2WeldJointDef =  Box2D.Dynamics.Joints.b2WeldJointDef
             ;
          
          var world = new b2World(
@@ -59,6 +60,39 @@
                      Math.random() + 0.1 //half width
                   ,  Math.random() + 0.1 //half height
                );
+               //TODO JVEDIT
+            } else if(Math.random() > 0.9) {
+            	px = Math.random() * 9;
+            	py = Math.random() * 9;
+            	fixDef.shape = new b2PolygonShape;
+            	fixDef.shape.SetAsBox(0.5,0.5);
+         	    bodyDef.position.Set(px+2,py+2);
+         	    bodyDef.position.x = px + 0.5;
+         	    bodyDef.position.y = px + 0.5;
+            	b1 = world.CreateBody(bodyDef);
+            	b1.CreateFixture(fixDef);
+            	bodyDef.position.x = px - 0.5;
+            	bodyDef.position.y = py + 0.5;
+            	b2 = world.CreateBody(bodyDef);
+            	b2.CreateFixture(fixDef);
+            	bodyDef.position.x = px + 0.5;
+            	bodyDef.position.y = py - 0.5;
+            	b3 = world.CreateBody(bodyDef);
+            	b3.CreateFixture(fixDef);
+            	bodyDef.position.x = px - 0.5;
+            	bodyDef.position.y = py - 0.5;
+            	b4 = world.CreateBody(bodyDef);
+            	b4.CreateFixture(fixDef);
+            	jdef = new b2WeldJointDef();
+            	jdef.Initialize(b1,b2,b1.GetWorldCenter());
+            	world.CreateJoint(jdef);
+            	jdef.Initialize(b1,b3,b1.GetWorldCenter());
+            	world.CreateJoint(jdef);
+            	jdef.Initialize(b2,b4,b2.GetWorldCenter());
+            	world.CreateJoint(jdef);
+            	jdef.Initialize(b3,b4,b3.GetWorldCenter());
+            	world.CreateJoint(jdef);
+            	//TODO /JVEDIT*/
             } else {
                fixDef.shape = new b2CircleShape(
                   Math.random() + 0.1 //radius
