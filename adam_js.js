@@ -1,10 +1,13 @@
 var canvas;
 var gl;
 var squareVerticesBuffer;
+var squareVerticesColorBuffer;
 var mvMatrix;
 var shaderProgram;
 var vertexPositionAttribute;
+var vertexColorAttribute;
 var perspectiveMatrix;
+var squareRotation = 0.0;
 
 function start() {
 	canvas = document.getElementById("glCanvas");
@@ -15,6 +18,7 @@ function start() {
 	
 	if (gl) {
 		gl.clearColor(0.0, 0.0, 0.0, 1.0);						//set clear color to black
+		gl.clearDepth(1.0);
 		gl.enable(gl.DEPTH_TEST);								//enable depth testing
 		gl.depthFunc(gl.LEQUAL);								//near things obscure far things
 		gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);		//clear the color as well as the depth buffer
@@ -71,6 +75,9 @@ function initShaders() {
 	
 	vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
 	gl.enableVertexAttribArray(vertexPositionAttribute);
+	
+	vertexColorAttribute = gl.getAttribLocation(shaderProgram, "aVertexColor");
+	gl.enableVertexAttribArray(vertexColorAttribute);
 }
 
 
@@ -131,20 +138,44 @@ function initBuffers() {
 		-1.0, -1.0, 0.0
 	];
 	
+	// Pass in the list of vertices into WebGL to build the shape.
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+	var colors = [
+		1.0, 1.0, 1.0, 1.0,		//white
+		1.0, 0.0, 0.0, 1.0,		//red
+		0.0, 1.0, 0.0, 1.0,		//green
+		0.0, 0.0, 1.0, 1.0		//blue
+	];
+	
+	squareVerticesColorBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesColorBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 }
 
 
+/**
+ * Draw the scene 
+ */
 function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	
 	perspectiveMatrix = makePerspective(45, 640.0/480.0, 0.1, 100.0);
 	
+	// Move the drawing position to the center of the screen
 	loadIdentity();
+	
+	//Back the drawing position up a little bit so that we can see it
 	mvTranslate([-0.0, 0.0, -6.0]);
 	
+	// Draw the square - bind array buffer and push to GL
 	gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
 	gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+	
+	// Set the colors attribute for the vertices
+	gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesColorBuffer);
+	gl.vertexAttribPointer(vertexColorAttribute, 4, gl.FLOAT, false, 0, 0);
+	
+	// Draw the square
 	setMatrixUniforms();
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
