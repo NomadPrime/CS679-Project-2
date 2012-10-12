@@ -13,7 +13,8 @@ var cubeTexture;
 var mvMatrix;
 var shaderProgram;
 var vertexPositionAttribute;
-var vertexColorAttribute;
+var vertexNormalAttribute;
+var textureCoordAttribute;
 var perspectiveMatrix;
 
 
@@ -24,7 +25,6 @@ function start() {
 	initWebGL(canvas);		//intilizes the GL context
 	
 	//Only continue if WebGL is available and working
-	
 	if (gl) {
 		gl.clearColor(0.0, 0.0, 0.0, 1.0);						//set clear color to black
 		gl.clearDepth(1.0);
@@ -205,6 +205,10 @@ function initBuffers() {
 	  	-1.0,  1.0, -1.0
 	];
 	
+	// Pass in the array of vertices for WebGL to draw
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+	
+	// Set up normals for lighting so that we can compute lighting
 	cubeVerticesNormalBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, cubeVerticesNormalBuffer);
 	
@@ -251,6 +255,7 @@ function initBuffers() {
 	// Pass in the list of vertices into WebGL to build the shape.
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 	
+	// Map the texture onto the cube's faces
 	cubeVerticesTextureCoordBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, cubeVerticesTextureCoordBuffer);
 	
