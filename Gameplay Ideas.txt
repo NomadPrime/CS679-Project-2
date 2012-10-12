@@ -1,0 +1,29 @@
+PLAYER ABILITIES:
+-basic gun
+-throw
+	either acts on particular object or acts on all objects within a space
+	capped force amount, enough to rip objects out of assemblies but not enough to be OP
+-specials (powerup abilities, one-time use per powerup)
+	grav bomb / magnet (gather objects, perhaps summon?)
+	bomb / force blast
+	rail driver (selected object(s) is continuously accelerated, if used right large multipart objects could be accelerated to high speeds)
+	expanded field / upped force
+
+ENEMY ABILITIES:
+-basic shooters
+-catchers
+	turn to face thrown objects? (would have to coordinate strikes)
+	thrown objects cannot be directly controlled?
+-rockets
+	charge time/slow proj
+
+ROBOT MOVEMENT IDEAS:
+-stop-n-shoot
+-orbit
+-approach from front or back?
+
+GAMEPLAY:
+-physics damage is effective in combat, but shotgun is effective at close range
+-If objects are sparse onscreen, more objects appear from ahead (increases probabilities)
+-CANNOT THROW ROBOTS DIRECTLY, just gets ridiculous when you can do that
+-could also make it a strategy to push robots offscreen (maybe if you do that too much it triggers a large spawn event? or not, too intensive)
