@@ -43,8 +43,8 @@ function start() {
     }
     makeObject(crateType, 800, 400, Math.random()*10, [10,10]);
     makeObject(crateType, 300, 400, Math.random()*10, [10,10]);
-    objectList[1].body.SetLinearVelocity(new b2Vec2(100,0));
-    objectList[1].body.SetAngularVelocity(20);
+    objectList[1].body.SetLinearVelocity(new b2Vec2(1000,0));
+    objectList[1].body.SetAngularVelocity(10);
     
     function update() {
     	theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
@@ -53,8 +53,7 @@ function start() {
     	
     	for(i = 0; i < objectList.length; i++)
     	{
-    		//objectList[i].draw();
-    		theContext.write("BLAH");
+    		objectList[i].draw();
     	}
     	
     	
