@@ -26,9 +26,9 @@ var mousey = 0;	//y-coordinate of mouse
 var bdef;// = new b2BodyDef;
 var fdef;// = new b2FixtureDef;
 var jdef;// = new b2WeldJointDef;
-var ddensity = 1.0;	//default density
+var ddensity = 1000;	//default density
 var dfriction = 0.5;	//default friction
-var drestitution = 0.2;	//default restitution
+var drestitution = 0.01;	//default restitution
 
 var objectList = [];	//list of free objects
 var enemyList = [];		//list of enemies
