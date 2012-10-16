@@ -41,13 +41,20 @@ function start() {
     function listen() {//account for effects of EventListeners
     	
     }
-    makeObject(crateType, 800, 400, Math.random()*10, [10,10]);
-    makeObject(crateType, 300, 400, Math.random()*10, [10,10]);
-    objectList[1].body.SetLinearVelocity(new b2Vec2(1000,0));
+    objectList.push(makeObject(crateType, 80, 40, Math.random()*10, [1,1]));
+   	objectList.push(makeObject(crateType, 30, 40, Math.random()*10, [1,1]));
+   	objectList[1].effect = railDriverEffect;
+   	objectList[1].data = new b2Vec2(1,0);
+    //objectList[1].body.SetLinearVelocity(new b2Vec2(100,0));
     objectList[1].body.SetAngularVelocity(10);
     
     function update() {
     	theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
+    	
+    	for(i = 0; i < objectList.length; i++)
+    	{
+    		objectList[i].action();
+    	}
     	
     	world.Step(1/60, 10, 10);	//advance physics engine
     	
