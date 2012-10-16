@@ -30,6 +30,7 @@ function start() {
     fdef.friction = dfriction;
     fdef.restitution = drestitution;
     fdef.shape = new b2CircleShape(1.0);
+    jdef = new b2WeldJointDef;
     
 
     function cull(a, b) {//sorting function, puts stuff tagged for removal at end to be popped, as used in Swarm Survival Game
@@ -41,25 +42,41 @@ function start() {
     function listen() {//account for effects of EventListeners
     	
     }
-    objectList.push(makeObject(crateType, 80, 40, Math.random()*10, [1,1]));
-   	objectList.push(makeObject(crateType, 30, 40, Math.random()*10, [1,1]));
-   	objectList[1].effect = railDriverEffect;
-   	objectList[1].data = new b2Vec2(1,0);
-    //objectList[1].body.SetLinearVelocity(new b2Vec2(100,0));
-    objectList[1].body.SetAngularVelocity(10);
+    
+    objectList.push(makeObject(crateType, 80, 30, 0, [5,5]));
+   	objectList.push(makeObject(crateType, 0, 40, Math.PI/4, [5,5]));
+   	objectList.push(makeObject(crateType, 80, 40, 0, [5,5]));
+   	objectList.push(makeObject(crateType, 80, 50, 0, [5,5]));
+   	objectList.push(makeObject(crateType, 90, 30, 0, [5,5]));
+   	objectList.push(makeObject(crateType, 90, 40, 0, [5,5]));
+   	objectList.push(makeObject(crateType, 90, 50, 0, [5,5]));
+    stuffList.push(makeWeld(objectList[0].body,objectList[2].body,true,10));
+    stuffList.push(makeWeld(objectList[0].body,objectList[4].body,true,10));
+    stuffList.push(makeWeld(objectList[4].body,objectList[5].body,true,10));
+    stuffList.push(makeWeld(objectList[5].body,objectList[6].body,true,10));
+    stuffList.push(makeWeld(objectList[2].body,objectList[5].body,true,10));
+    stuffList.push(makeWeld(objectList[2].body,objectList[3].body,true,10));
+    stuffList.push(makeWeld(objectList[3].body,objectList[6].body,true,10));
+   	//objectList[1].effect = railDriverEffect;
+   	objectList[1].data = new b2Vec2(1000,0);
+   	//objectList[0].effect = stasisEffect;
+   	objectList[0].timer = 33;
+    objectList[1].body.SetLinearVelocity(new b2Vec2(1000,0));
+    objectList[1].body.SetAngularVelocity(50);
+    
     
     function update() {
     	theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
     	
-    	for(i = 0; i < objectList.length; i++)
-    	{
+    	world.Step(1/60, 10, 10);	//advance physics engine
+    	for(i = 0; i < objectList.length; i++) {
     		objectList[i].action();
     	}
-    	
-    	world.Step(1/60, 10, 10);	//advance physics engine
-    	
-    	for(i = 0; i < objectList.length; i++)
-    	{
+    	for(i = 0; i < stuffList.length; i++) {
+    		stuffList[i].action();
+    	}
+    	//world.ClearForces();
+    	for(i = 0; i < objectList.length; i++) {
     		objectList[i].draw();
     	}
     	

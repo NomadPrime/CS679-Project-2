@@ -7,7 +7,8 @@ var anObject = {
 	"type" : 0,	//what kind of object it is, object types listed in code segments
 	"dims" : [],	//an array of dimensions of the object, depending on object type
 	"effect" : 0,	//any effects currently on the object
-	"data" : null,	//holds vectors etc. used for effects or other things
+	"data" : null,	//holds additional data used for effects or other things
+	"timer" : 0,	//used for effect cooldowns
 	"body" : null,	//b2Body of object in physics engine
 	"fixture" : null,	//b2Fixture attached to body(used for removal)
 	"remove" : false,	//used to flag object for removal from lists
@@ -18,6 +19,12 @@ var anObject = {
 		if(this.effect !== 0) {//skips everything if no effect
 			if(this.effect == railDriverEffect) {	//continuously applies force using the given vector
 				this.ctrForce(this.data);
+			} else if(this.effect == stasisEffect) {	//nulls velocity of object, after initial collision won't move
+				if(this.timer > 0) {
+				this.body.SetLinearVelocity(new b2Vec2(0,0));
+				this.body.SetAngularVelocity(0);
+				this.timer--;
+				} else {this.effect = 0;}	//stasis effect dissipates after a certain amount of time
 			}
 			//place additional effects here that interact only with this body
 		}
@@ -25,13 +32,14 @@ var anObject = {
 	},
 	
 	ctrForce : function(vector) {	//Applies a force to the body's center, so as not to rotate it.
-		this.body.ApplyForce(vector,this.body.GetPosition());
+		this.body.ApplyImpulse(vector,this.body.GetPosition());
 	}
 };
 //------------------------------//
 //	EFFECT TYPE CODES			//
 //------------------------------//
 var railDriverEffect = 3854;	//Rail Driver: continuously applies force to a given object.
+var stasisEffect = 2385;	//Stasis: object is frozen, will only move slightly when pushed.
 //------------------------------//
 //	CRATE OBJECTS				//
 //------------------------------//
@@ -51,10 +59,11 @@ function drawCrate() {	//draws a crate. replace with WebGL code later.
 		theContext.lineTo((pos.x+this.dims[1]*Math.cos(theta)-this.dims[0]*Math.cos(theta+Math.PI/2))*10,(pos.y+this.dims[1]*Math.sin(theta)-this.dims[0]*Math.sin(theta+Math.PI/2))*10);
 	theContext.closePath();
 	theContext.stroke();
+	theContext.fill();
 }
 
 //------------------------------//
-//	makeObject Function			//
+//	MAKEOBJECT FUNCTION			//
 //	x&y=coordinates				//
 //	theta=angle					//
 //	dims=array of dimensions	//

@@ -18,16 +18,18 @@ var b2WeldJointDef =  Box2D.Dynamics.Joints.b2WeldJointDef;
 //------------------------------//
 //	Global Variables			//
 //------------------------------//
-var theCanvas;// = null;
-var theContext;// = null;
-var world;// = null;
-var mousex = 0;
-var mousey = 0;
+var theCanvas;	//canvas on webpage
+var theContext;	//canvas 2D context
+var world;	//physics engine world
+var mousex = 0;	//x-coordinate of mouse
+var mousey = 0;	//y-coordinate of mouse
 var bdef;// = new b2BodyDef;
 var fdef;// = new b2FixtureDef;
+var jdef;// = new b2WeldJointDef;
 var ddensity = 1.0;	//default density
 var dfriction = 0.5;	//default friction
 var drestitution = 0.2;	//default restitution
 
 var objectList = [];	//list of free objects
 var enemyList = [];		//list of enemies
+var stuffList = [];		//list of misc stuff
