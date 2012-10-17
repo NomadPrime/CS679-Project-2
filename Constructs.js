@@ -10,7 +10,7 @@ var bWeld = {
 	"remove" : false,	//tag for use with removal
 	
 	action : function() {
-		if(this.weld.GetReactionForce(1/60).Length() > this.breakForce && !this.grace)
+		if(this.weld.GetReactionForce(1/frameRate).Length() > this.breakForce && !this.grace)
 		{
 			world.DestroyJoint(this.weld);
 		} else if(this.grace){this.grace--;}
