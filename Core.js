@@ -14,7 +14,7 @@ function start() {
     
     
     //TODO: Used to debug the code. Delete when done.
-    function debug(otpt) {
+    function spam(otpt) {
     	dbg = document.getElementById("debugtext");
     	dbg.innerHTML = otpt;
     }
@@ -43,26 +43,30 @@ function start() {
     	
     }
     
-    objectList.push(makeObject(crateType, 80, 38, 0, [1,1]));
-   	objectList.push(makeObject(crateType, 0, 40, Math.random(), [1,1]));
+    objectList.push(makeObject(crateType, 80, 39, 0, [1,1]));
+   	objectList.push(makeObject(crateType, -800, 30, Math.random(), [1,1]));
    	objectList.push(makeObject(crateType, 80, 40, 0, [1,1]));
-   	objectList.push(makeObject(crateType, 80, 42, 0, [1,1]));
-   	objectList.push(makeObject(crateType, 82, 38, 0, [1,1]));
-   	objectList.push(makeObject(crateType, 82, 40, 0, [1,1]));
-   	objectList.push(makeObject(crateType, 82, 42, 0, [1,1]));
-    stuffList.push(makeWeld(objectList[0].body,objectList[2].body,true,200+Math.random()*200));
-    stuffList.push(makeWeld(objectList[0].body,objectList[4].body,true,200+Math.random()*200));
-    stuffList.push(makeWeld(objectList[4].body,objectList[5].body,true,200+Math.random()*200));
-    stuffList.push(makeWeld(objectList[5].body,objectList[6].body,true,200+Math.random()*200));
-    stuffList.push(makeWeld(objectList[2].body,objectList[5].body,true,200+Math.random()*200));
-    stuffList.push(makeWeld(objectList[2].body,objectList[3].body,true,200+Math.random()*200));
-    stuffList.push(makeWeld(objectList[3].body,objectList[6].body,true,200+Math.random()*200));
+   	objectList.push(makeObject(crateType, 80, 41, 0, [1,1]));
+   	objectList.push(makeObject(crateType, 81, 39, 0, [1,1]));
+   	objectList.push(makeObject(crateType, 81, 40, 0, [1,1]));
+   	objectList.push(makeObject(crateType, 81, 41, 0, [1,1]));
+    stuffList.push(makeWeld(objectList[0].body,objectList[2].body,true,200+Math.random()*300));
+    stuffList.push(makeWeld(objectList[0].body,objectList[4].body,true,200+Math.random()*300));
+    stuffList.push(makeWeld(objectList[4].body,objectList[5].body,true,200+Math.random()*300));
+    stuffList.push(makeWeld(objectList[5].body,objectList[6].body,true,200+Math.random()*300));
+    stuffList.push(makeWeld(objectList[2].body,objectList[5].body,true,200+Math.random()*300));
+    stuffList.push(makeWeld(objectList[2].body,objectList[3].body,true,200+Math.random()*300));
+    stuffList.push(makeWeld(objectList[3].body,objectList[6].body,true,200+Math.random()*300));
+    for(i = 0; i < 20; i++) {
+    	crateStack(200+100*Math.random(), 40+100*(Math.random()-0.5), 6, worldSpeed, 0, Math.random()*5, 1, 1, Math.random()*5, Math.random()*5, 50, 30, 0);
+    }
+    crateStack(100, 40, 6, -50, 0, 10, 1, 1, 5, 5, 20, 30, 0);
    	//objectList[1].effect = railDriverEffect;
-   	objectList[1].data = new b2Vec2(1000,0);
+   	objectList[1].data = new b2Vec2(100,0);
    	//objectList[0].effect = stasisEffect;
-   	objectList[0].timer = 33;
-    objectList[1].body.SetLinearVelocity(new b2Vec2(1000,(Math.random()-0.5)*40));
-    objectList[1].body.SetAngularVelocity((Math.random()-0.5)*30);
+   	//objectList[0].timer = 60;
+    objectList[1].body.SetLinearVelocity(new b2Vec2(400+Math.random()*500,(Math.random()-0.5)*40));
+    objectList[1].body.SetAngularVelocity((Math.random()-0.5)*60);
     
     
     function update() {

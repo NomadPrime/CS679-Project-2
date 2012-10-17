@@ -29,6 +29,7 @@ var jdef;// = new b2WeldJointDef;
 var ddensity = 1000;	//default density
 var dfriction = 0.5;	//default friction
 var drestitution = 0.01;	//default restitution
+var worldSpeed = -10;	//speed of "static" objects in the world
 
 var objectList = [];	//list of free objects
 var enemyList = [];		//list of enemies

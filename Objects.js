@@ -44,19 +44,21 @@ var stasisEffect = 2385;	//Stasis: object is frozen, will only move slightly whe
 //	CRATE OBJECTS				//
 //------------------------------//
 var crateType = 1482;	//crate type code
-//dims[0] = half width
-//dims[1] = half height
+//dims[0] = width
+//dims[1] = height
 
 function drawCrate() {	//draws a crate. replace with WebGL code later.
 	var pos=this.body.GetPosition();
 	var theta=this.body.GetAngle();
 	theContext.strokeStyle = "#555555";
 	theContext.lineWidth = 1;
+	hwidth = this.dims[0] / 2;
+	hheight = this.dims[1] / 2;
 	theContext.beginPath();
-		theContext.moveTo((pos.x+this.dims[1]*Math.cos(theta)+this.dims[0]*Math.cos(theta+Math.PI/2))*10,(pos.y+this.dims[1]*Math.sin(theta)+this.dims[0]*Math.sin(theta+Math.PI/2))*10);
-		theContext.lineTo((pos.x-this.dims[1]*Math.cos(theta)+this.dims[0]*Math.cos(theta+Math.PI/2))*10,(pos.y-this.dims[1]*Math.sin(theta)+this.dims[0]*Math.sin(theta+Math.PI/2))*10);
-		theContext.lineTo((pos.x-this.dims[1]*Math.cos(theta)-this.dims[0]*Math.cos(theta+Math.PI/2))*10,(pos.y-this.dims[1]*Math.sin(theta)-this.dims[0]*Math.sin(theta+Math.PI/2))*10);
-		theContext.lineTo((pos.x+this.dims[1]*Math.cos(theta)-this.dims[0]*Math.cos(theta+Math.PI/2))*10,(pos.y+this.dims[1]*Math.sin(theta)-this.dims[0]*Math.sin(theta+Math.PI/2))*10);
+		theContext.moveTo((pos.x+hheight*Math.cos(theta)+hwidth*Math.cos(theta-Math.PI/2))*10,(pos.y+hheight*Math.sin(theta)+hwidth*Math.sin(theta-Math.PI/2))*10);
+		theContext.lineTo((pos.x-hheight*Math.cos(theta)+hwidth*Math.cos(theta-Math.PI/2))*10,(pos.y-hheight*Math.sin(theta)+hwidth*Math.sin(theta-Math.PI/2))*10);
+		theContext.lineTo((pos.x-hheight*Math.cos(theta)-hwidth*Math.cos(theta-Math.PI/2))*10,(pos.y-hheight*Math.sin(theta)-hwidth*Math.sin(theta-Math.PI/2))*10);
+		theContext.lineTo((pos.x+hheight*Math.cos(theta)-hwidth*Math.cos(theta-Math.PI/2))*10,(pos.y+hheight*Math.sin(theta)-hwidth*Math.sin(theta-Math.PI/2))*10);
 	theContext.closePath();
 	theContext.stroke();
 	theContext.fill();
@@ -82,7 +84,7 @@ function makeObject(type, x, y, theta, dims) {	//creates an object with the spec
 	if(type == crateType) {
 		obj.draw = drawCrate;
 		fdef.shape = new b2PolygonShape;
-		fdef.shape.SetAsBox(dims[0],dims[1]);
+		fdef.shape.SetAsBox(dims[0]/2,dims[1]/2);
 	}
 	obj.fixture = obj.body.CreateFixture(fdef);
 	return obj;
