@@ -50,6 +50,9 @@ function start() {
    	objectList.push(makeObject(crateType, 81, 39, 0, [1,1]));
    	objectList.push(makeObject(crateType, 81, 40, 0, [1,1]));
    	objectList.push(makeObject(crateType, 81, 41, 0, [1,1]));
+
+	enemyList.push(makeEnemy(82,43,0,[1,1]));
+
     stuffList.push(makeWeld(objectList[0].body,objectList[2].body,true,200+Math.random()*300));
     stuffList.push(makeWeld(objectList[0].body,objectList[4].body,true,200+Math.random()*300));
     stuffList.push(makeWeld(objectList[4].body,objectList[5].body,true,200+Math.random()*300));
@@ -68,7 +71,8 @@ function start() {
     objectList[1].body.SetLinearVelocity(new b2Vec2(400+Math.random()*500,(Math.random()-0.5)*40));
     objectList[1].body.SetAngularVelocity((Math.random()-0.5)*60);
     
-    
+    enemyList[0].body.SetLinearVelocity(new b2Vec2(400,50));
+   
     function update() {
     	theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
     	
@@ -76,6 +80,10 @@ function start() {
     	for(i = 0; i < objectList.length; i++) {
     		objectList[i].action();
     	}
+
+	for(i = 0; i < enemyList.length; i++){
+		enemyList[i].action();
+}
     	for(i = 0; i < stuffList.length; i++) {
     		stuffList[i].action();
     	}
