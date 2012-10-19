@@ -77,8 +77,11 @@ function start() {
    	objectList.push(makeObject(crateType, 81, 40, 0, [1,1]));
    	objectList.push(makeObject(crateType, 81, 41, 0, [1,1]));
 
+
 	enemyList.push(makeEnemy(82, 43, 0,[1,1]));
 	enemyList.push(makeEnemy(99, 0, 0,[1,1]));
+	enemyList.push(makeEnemy(0,0,0,[1,1]));
+
 
     stuffList.push(makeWeld(objectList[0].body,objectList[2].body,true,200+Math.random()*300));
     stuffList.push(makeWeld(objectList[0].body,objectList[4].body,true,200+Math.random()*300));
@@ -119,6 +122,10 @@ function start() {
     	for(i = 0; i < objectList.length; i++) {
     		objectList[i].draw();
     	}
+
+	for(i = 0; i < enemyList.length; i++){
+		enemyList[i].draw();
+}
     	if(Math.random() >= .99) {
     		crateStack(400+100*Math.random(), 40+100*(Math.random()-0.5), 6, worldSpeed, 0, Math.random()*5, 1, 1, Math.random()*5, Math.random()*5, 30, 50, 0);
     	}
