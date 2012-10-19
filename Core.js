@@ -32,6 +32,32 @@ function start() {
     fdef.shape = new b2CircleShape(1.0);
     jdef = new b2WeldJointDef;
     
+    var listener = new b2Listener;
+
+    listener.BeginContact = function(contact){
+	    //FIXME:
+	    //do something?
+    }
+
+    listener.EndContact = function(contact){
+	    //FIXME:
+	    //do something?
+
+    }
+
+    listener.PostSolve = function(contact, impulse){
+	    //FIXME:
+	    //do something
+	    alert("enemy collide!");
+
+    }
+
+
+    listener.PreSolve = function(contact, impulse){
+	    //FIXME:
+	    //do something
+
+    }
 
     function cull(a, b) {//sorting function, puts stuff tagged for removal at end to be popped, as used in Swarm Survival Game
         if (a.remove) { return 1; }
@@ -51,7 +77,8 @@ function start() {
    	objectList.push(makeObject(crateType, 81, 40, 0, [1,1]));
    	objectList.push(makeObject(crateType, 81, 41, 0, [1,1]));
 
-	enemyList.push(makeEnemy(82,43,0,[1,1]));
+	enemyList.push(makeEnemy(82, 43, 0,[1,1]));
+	enemyList.push(makeEnemy(99, 0, 0,[1,1]));
 
     stuffList.push(makeWeld(objectList[0].body,objectList[2].body,true,200+Math.random()*300));
     stuffList.push(makeWeld(objectList[0].body,objectList[4].body,true,200+Math.random()*300));
@@ -72,6 +99,7 @@ function start() {
     objectList[1].body.SetAngularVelocity((Math.random()-0.5)*60);
     
     enemyList[0].body.SetLinearVelocity(new b2Vec2(400,50));
+    enemyList[1].body.SetLinearVelocity(new b2Vec2(40,500));
    
     function update() {
     	theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);

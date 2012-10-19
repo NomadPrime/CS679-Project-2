@@ -2,9 +2,16 @@
 //
 
 var enemyType = 1482;
+var enemyInitHealth = 1000;
+//FIXME
+//now enemy only collide with enemies for debug pupose
+//needs to change that later
+var enemyCollisionMast = 1;
 
 function makeEnemy(x, y, theta, dims){
 	enemy = makeObject(enemyType, x, y, theta, dims);
+
+	enemy.health = enemyInitHealth;
 
 	enemy.draw = function (){
 		//draw enemy
@@ -37,10 +44,17 @@ function makeEnemy(x, y, theta, dims){
 	enemyFdef.density = 1000;
 	enemyFdef.friction = 0.5;
 	enemyFdef.resitution = 0.2;
+	enemyFdef.filter.categoryBits = enemyCollisionBits;
+	enemyFdef.filter.maskBits = enemyCollisionMast;
 	enemyFdef.shape = new b2PolygonShape;
 	enemyFdef.shape.SetAsBox(600/SCALE) /2, (10/SCALE) / 2);
 	enemyFdef.fixture = enemy.body.CreateFixture(enemyFdef);
 	
+	enemy.action = function(){
+		super.action();
+		
+		//check for collision
+	}
 	return enemy
 }
 

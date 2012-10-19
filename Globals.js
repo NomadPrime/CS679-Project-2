@@ -14,6 +14,7 @@ var b2CircleShape = Box2D.Collision.Shapes.b2CircleShape;
 var b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
 var b2WeldJoint = Box2D.Dynamics.Joints.b2WeldJoint;
 var b2WeldJointDef =  Box2D.Dynamics.Joints.b2WeldJointDef;
+var b2Listener = Box2D.Dynamics.b2ContactListener;
 
 //------------------------------//
 //	Global Variables			//
@@ -35,3 +36,8 @@ var worldSpeed = -10;	//speed of "static" objects in the world
 var objectList = [];	//list of free objects
 var enemyList = [];		//list of enemies
 var stuffList = [];		//list of misc stuff
+
+
+//Constants
+var enemyCollisionBits = 1;
+var crafeCollisionBits = 2;

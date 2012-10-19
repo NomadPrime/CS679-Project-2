@@ -86,6 +86,11 @@ function makeObject(type, x, y, theta, dims) {	//creates an object with the spec
 		fdef.shape = new b2PolygonShape;
 		fdef.shape.SetAsBox(dims[0]/2,dims[1]/2);
 	}
+
+	//by default object don't collide with each other unless otherwise specified.
+	obj.fixture.filter.categoryBits = 0;
+	obj.fixture.filter.maskBits = 0;
+	
 	obj.fixture = obj.body.CreateFixture(fdef);
 	return obj;
 }
