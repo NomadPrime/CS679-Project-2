@@ -29,6 +29,8 @@ var anObject = {
 			//place additional effects here that interact only with this body
 		}
 		//global effects will go outside first if statement
+		
+		//TODO: Put deletion stuff here (goes out of bounds, kills the fixture, the body, and culls the object from the list)
 	},
 	
 	ctrForce : function(vector) {	//Applies a force to the body's center, so as not to rotate it.
@@ -50,19 +52,28 @@ var crateType = 1482;	//crate type code
 function drawCrate() {	//draws a crate. replace with WebGL code later.
 	var pos=this.body.GetPosition();
 	var theta=this.body.GetAngle();
+	var cor;
 	theContext.strokeStyle = "#555555";
 	theContext.lineWidth = 1;
 	hwidth = this.dims[0] / 2;
 	hheight = this.dims[1] / 2;
 	theContext.beginPath();
-		theContext.moveTo((pos.x+hheight*Math.cos(theta)+hwidth*Math.cos(theta-Math.PI/2))*10,(pos.y+hheight*Math.sin(theta)+hwidth*Math.sin(theta-Math.PI/2))*10);
-		theContext.lineTo((pos.x-hheight*Math.cos(theta)+hwidth*Math.cos(theta-Math.PI/2))*10,(pos.y-hheight*Math.sin(theta)+hwidth*Math.sin(theta-Math.PI/2))*10);
-		theContext.lineTo((pos.x-hheight*Math.cos(theta)-hwidth*Math.cos(theta-Math.PI/2))*10,(pos.y-hheight*Math.sin(theta)-hwidth*Math.sin(theta-Math.PI/2))*10);
-		theContext.lineTo((pos.x+hheight*Math.cos(theta)-hwidth*Math.cos(theta-Math.PI/2))*10,(pos.y+hheight*Math.sin(theta)-hwidth*Math.sin(theta-Math.PI/2))*10);
+		cor = coordTrans(hwidth,hheight,pos.x,pos.y,theta);
+		theContext.moveTo((cor[0])*10,(cor[1])*10);
+		cor = coordTrans(-hwidth,hheight,pos.x,pos.y,theta);
+		theContext.lineTo((cor[0])*10,(cor[1])*10);
+		cor = coordTrans(-hwidth,-hheight,pos.x,pos.y,theta);
+		theContext.lineTo((cor[0])*10,(cor[1])*10);
+		cor = coordTrans(hwidth,-hheight,pos.x,pos.y,theta);
+		theContext.lineTo((cor[0])*10,(cor[1])*10);
 	theContext.closePath();
 	theContext.stroke();
 	theContext.fill();
 }
+//------------------------------//
+//	DiSH OBJECT					//
+//------------------------------//
+//TODO: This stuff
 
 //------------------------------//
 //	MAKEOBJECT FUNCTION			//
@@ -81,11 +92,28 @@ function makeObject(type, x, y, theta, dims) {	//creates an object with the spec
 	bdef.angle = theta;
 	bdef.userData = obj;
 	obj.body = world.CreateBody(bdef);
-	if(type == crateType) {
+	if(type == playerType) {	//player type objects have their own fixture instantiation code
+		return obj;
+	//} else if(type == enemyType) {	//TODO: Enemy type stuff goes here
+		
+	} else if(type == crateType) {
 		obj.draw = drawCrate;
 		fdef.shape = new b2PolygonShape;
 		fdef.shape.SetAsBox(dims[0]/2,dims[1]/2);
 	}
 	obj.fixture = obj.body.CreateFixture(fdef);
 	return obj;
+}
+
+//------------------------------//
+//	COORDINATE TRANSFORMATION	//
+//	Pass it an x,y pair,		//
+//	translation xy cors and an	//
+//	angle of rotation in rads	//
+//------------------------------//
+function coordTrans(x,y, xtrans, ytrans, theta) {
+	reply = [0,0];
+	reply[0] = xtrans + Math.cos(theta) * x - Math.sin(theta) * y;
+	reply[1] = ytrans + Math.sin(theta) * x + Math.cos(theta) * y;
+	return reply;
 }

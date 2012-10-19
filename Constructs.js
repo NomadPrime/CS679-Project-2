@@ -6,14 +6,17 @@
 var bWeld = {
 	"weld" : null,	//weld joint object is applied to
 	"breakForce" : 9001,	//amount of force required to break weld
-	"grace" : 20,	//grace period where welds are indestructible
+	"grace" : 30,	//grace period where welds are indestructible (then really destructible for a little bit)
 	"remove" : false,	//tag for use with removal
 	
 	action : function() {
-		if(this.weld.GetReactionForce(1/frameRate).Length() > this.breakForce && !this.grace)
+		if(this.grace > 10) {fracture = this.breakForce * 10; this.grace--;}
+		else if(this.grace > 0) {fracture = this.breakForce / 2; this.grace--;}
+		else {fracture = this.breakForce;}
+		if(this.weld.GetReactionForce(1/frameRate).Length() > fracture)
 		{
 			world.DestroyJoint(this.weld);
-		} else if(this.grace){this.grace--;}
+		}
 	},
 	purge : function() {	//removes object from the object list
 		
@@ -27,6 +30,7 @@ function makeWeld(bA, bB, collide, maxForce) {
 	wld.breakForce = maxForce;
 	jdef.Initialize(bA, bB, bA.GetWorldCenter());
 	jdef.collideConnected = collide;
+	jdef.userData = wld;
 	wld.weld = world.CreateJoint(jdef);
 	return wld;
 }

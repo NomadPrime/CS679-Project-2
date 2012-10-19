@@ -18,7 +18,7 @@ var b2WeldJointDef =  Box2D.Dynamics.Joints.b2WeldJointDef;
 //------------------------------//
 //	Global Variables			//
 //------------------------------//
-var frameRate = 50;	//the FPS of the game
+var frameRate = 60;	//the FPS of the game
 var theCanvas;	//canvas on webpage
 var theContext;	//canvas 2D context
 var world;	//physics engine world
@@ -35,3 +35,4 @@ var worldSpeed = -10;	//speed of "static" objects in the world
 var objectList = [];	//list of free objects
 var enemyList = [];		//list of enemies
 var stuffList = [];		//list of misc stuff
+var keysDown = {};	//holds all keys currently pressed

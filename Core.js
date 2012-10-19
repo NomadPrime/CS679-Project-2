@@ -59,14 +59,17 @@ function start() {
     stuffList.push(makeWeld(objectList[3].body,objectList[6].body,true,200+Math.random()*300));
     for(i = 0; i < 40; i++) {
     }
-    crateStack(160, 40, 0, -5000, 0, 0, 1, 1, 20, 20, 50, 50, 0);
-    crateStack(0, 40, 0, 5000, 0, 0, 1, 1, 20, 20, 50, 50, 0);
+    crateStack(160, 40, 0, -5000, 0, 0, 1, 1, 2, 2, 50, 50, 0);
+    crateStack(0, 40, 0, 0, 0, 0, 1, 1, 2, 2, 50, 50, 0);
    	//objectList[1].effect = railDriverEffect;
    	objectList[1].data = new b2Vec2(100,0);
    	//objectList[0].effect = stasisEffect;
    	//objectList[0].timer = 60;
     objectList[1].body.SetLinearVelocity(new b2Vec2(400+Math.random()*500,(Math.random()-0.5)*40));
     objectList[1].body.SetAngularVelocity((Math.random()-0.5)*60);
+    
+    //Player.init();
+    
     
     
     function update() {
@@ -79,12 +82,13 @@ function start() {
     	for(i = 0; i < stuffList.length; i++) {
     		stuffList[i].action();
     	}
-    	//world.ClearForces();
+    	//Player.action();
+    	world.ClearForces();
     	for(i = 0; i < objectList.length; i++) {
     		objectList[i].draw();
     	}
     	if(Math.random() >= .99) {
-    		crateStack(400+100*Math.random(), 40+100*(Math.random()-0.5), 6, worldSpeed, 0, Math.random()*5, 1, 1, Math.random()*5, Math.random()*5, 30, 50, 0);
+    		crateStack(300, 40+100*(Math.random()-0.5), 6, worldSpeed, 0, (Math.random()-0.5)*20, 1, 1, Math.random()*5, Math.random()*5, 30, 50, 0);
     	}
     	
     	
