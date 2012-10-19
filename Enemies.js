@@ -12,25 +12,21 @@ function makeEnemy(x, y, theta, dims){
 		//for now I just copy and pasted craft's draw code
 		//need to have its own drawing
 		var pos=this.body.GetPosition();
-		var theta=this.body.GetAngle();
-		theContext.strokeStyle = "#555555";
-		theContext.lineWidth = 1;
-		hwidth = this.dims[0] / 2;
-		hheight = this.dims[1] / 2;
-		theContext.beginPath();
-		theContext.moveTo((pos.x+hheight*Math.cos(theta)+hwidth*Math.cos(theta-Math.PI/2))*10,(pos.y+hheight*Math.sin(theta)+hwidth*Math.sin(theta-Mat
-						h.PI/2))*10);
-		theContext.lineTo((pos.x-hheight*Math.cos(theta)+hwidth*Math.cos(theta-Math.PI/2))*10,(pos.y-hheight*Math.sin(theta)+hwidth*Math.sin(theta-Mat
-						h.PI/2))*10);
-		theContext.lineTo((pos.x-hheight*Math.cos(theta)-hwidth*Math.cos(theta-Math.PI/2))*10,(pos.y-hheight*Math.sin(theta)-hwidth*Math.sin(theta-Mat
-						h.PI/2))*10);
-		theContext.lineTo((pos.x+hheight*Math.cos(theta)-hwidth*Math.cos(theta-Math.PI/2))*10,(pos.y+hheight*Math.sin(theta)-hwidth*Math.sin(theta-Mat
-						h.PI/2))*10);
-		theContext.closePath();
-		theContext.stroke();
-		theContext.fill();
-
-	}
+	var pos=this.body.GetPosition();
+	var theta=this.body.GetAngle();
+	theContext.strokeStyle = "#155555";
+	theContext.lineWidth = 10;
+	hwidth = this.dims[0] / 2;
+	hheight = this.dims[1] / 2;
+	theContext.beginPath();
+	theContext.moveTo((pos.x+hheight*Math.cos(theta)+hwidth*Math.cos(theta-Math.PI/2))*10,(pos.y+hheight*Math.sin(theta)+hwidth*Math.sin(theta-Math.PI/2))*10);
+		theContext.lineTo((pos.x-hheight*Math.cos(theta)+hwidth*Math.cos(theta-Math.PI/2))*10,(pos.y-hheight*Math.sin(theta)+hwidth*Math.sin(theta-Math.PI/2))*10);
+		theContext.lineTo((pos.x-hheight*Math.cos(theta)-hwidth*Math.cos(theta-Math.PI/2))*10,(pos.y-hheight*Math.sin(theta)-hwidth*Math.sin(theta-Math.PI/2))*10);
+		theContext.lineTo((pos.x+hheight*Math.cos(theta)-hwidth*Math.cos(theta-Math.PI/2))*10,(pos.y+hheight*Math.sin(theta)-hwidth*Math.sin(theta-Math.PI/2))*10);
+	theContext.closePath();
+	theContext.stroke();
+	theContext.fill();
+};
 
 	//enemy fixture
 	enemyFdef = new b2FixtureDef;
@@ -38,7 +34,7 @@ function makeEnemy(x, y, theta, dims){
 	enemyFdef.friction = 0.5;
 	enemyFdef.resitution = 0.2;
 	enemyFdef.shape = new b2PolygonShape;
-	enemyFdef.shape.SetAsBox(600/SCALE) /2, (10/SCALE) / 2);
+	enemyFdef.shape.SetAsBox(20, 20);
 	enemyFdef.fixture = enemy.body.CreateFixture(enemyFdef);
 	
 	return enemy
