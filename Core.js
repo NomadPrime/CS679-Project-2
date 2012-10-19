@@ -25,6 +25,7 @@ function start() {
     //properties of objects
     bdef = new b2BodyDef;
     bdef.allowSleep = false;
+    bdef.type = b2Body.b2_dynamicBody
     fdef = new b2FixtureDef;
     fdef.density = ddensity;
     fdef.friction = dfriction;
@@ -38,6 +39,15 @@ function start() {
         else if (b.remove) { return -1; }
         else { return 0; }
     }
+    
+    window.addEventListener("keydown", function (e) {	//keyboard detection function as used in Swarm Survival Game
+        if (!(e.keyCode in keysDown)) {
+            //firstKeyHit(e.keyCode);
+        }
+        keysDown[e.keyCode] = true;
+
+    }, false);
+    window.addEventListener("keyup", function (e) { delete keysDown[e.keyCode]; }, false);
     
     function listen() {//account for effects of EventListeners
     	
@@ -68,13 +78,20 @@ function start() {
     objectList[1].body.SetLinearVelocity(new b2Vec2(400+Math.random()*500,(Math.random()-0.5)*40));
     objectList[1].body.SetAngularVelocity((Math.random()-0.5)*60);
     
-    //Player.init();
+    Player.init();
     
     
-    
+         var debugDraw = new b2DebugDraw();
+			debugDraw.SetSprite(theContext);
+			debugDraw.SetDrawScale(10.0);
+			debugDraw.SetFillAlpha(1);
+			debugDraw.SetLineThickness(1.0);
+			debugDraw.SetFlags(b2DebugDraw.e_shapeBit/* | b2DebugDraw.e_jointBit*/);
+			world.SetDebugDraw(debugDraw);
     function update() {
     	theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
     	
+    	Player.action();
     	world.Step(1/frameRate, 10, 10);	//advance physics engine
     	for(i = 0; i < objectList.length; i++) {
     		objectList[i].action();
@@ -82,13 +99,15 @@ function start() {
     	for(i = 0; i < stuffList.length; i++) {
     		stuffList[i].action();
     	}
-    	//Player.action();
+    	world.DrawDebugData();
     	world.ClearForces();
     	for(i = 0; i < objectList.length; i++) {
-    		objectList[i].draw();
+    		//objectList[i].draw();
     	}
+    	Player.draw();
+    	
     	if(Math.random() >= .99) {
-    		crateStack(300, 40+100*(Math.random()-0.5), 6, worldSpeed, 0, (Math.random()-0.5)*20, 1, 1, Math.random()*5, Math.random()*5, 30, 50, 0);
+    		crateStack(300, 40+100*(Math.random()-0.5), 6, worldSpeed, 0, (Math.random()-0.5)*20, 1, 1, Math.random()*5, Math.random()*5, 200, 50, 0);
     	}
     	
     	

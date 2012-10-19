@@ -11,7 +11,7 @@ var bWeld = {
 	
 	action : function() {
 		if(this.grace > 10) {fracture = this.breakForce * 10; this.grace--;}
-		else if(this.grace > 0) {fracture = this.breakForce / 2; this.grace--;}
+		else if(this.grace > 0) {fracture = this.breakForce / 4; this.grace--;}
 		else {fracture = this.breakForce;}
 		if(this.weld.GetReactionForce(1/frameRate).Length() > fracture)
 		{

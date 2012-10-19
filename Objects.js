@@ -53,7 +53,8 @@ function drawCrate() {	//draws a crate. replace with WebGL code later.
 	var pos=this.body.GetPosition();
 	var theta=this.body.GetAngle();
 	var cor;
-	theContext.strokeStyle = "#555555";
+	theContext.strokeStyle = "#000000";
+	theContext.fillStyle = "#000000";
 	theContext.lineWidth = 1;
 	hwidth = this.dims[0] / 2;
 	hheight = this.dims[1] / 2;
@@ -87,13 +88,15 @@ function makeObject(type, x, y, theta, dims) {	//creates an object with the spec
 	obj = new Empty();
 	obj.type = type;
 	obj.dims = dims;
-	bdef.type = b2Body.b2_dynamicBody;
 	bdef.position.Set(x,y);
 	bdef.angle = theta;
 	bdef.userData = obj;
 	obj.body = world.CreateBody(bdef);
-	if(type == playerType) {	//player type objects have their own fixture instantiation code
-		return obj;
+	if(type == playerType) {	//player type objects are polygons from an array of vertices
+		//TODO: Make the instantiation code here using a line from pvertices
+		obj.draw = playerPartDraw;
+		fdef.shape = new b2PolygonShape;
+		fdef.shape.SetAsArray(dims, dims.length);
 	//} else if(type == enemyType) {	//TODO: Enemy type stuff goes here
 		
 	} else if(type == crateType) {
@@ -111,7 +114,7 @@ function makeObject(type, x, y, theta, dims) {	//creates an object with the spec
 //	translation xy cors and an	//
 //	angle of rotation in rads	//
 //------------------------------//
-function coordTrans(x,y, xtrans, ytrans, theta) {
+function coordTrans(x, y, xtrans, ytrans, theta) {
 	reply = [0,0];
 	reply[0] = xtrans + Math.cos(theta) * x - Math.sin(theta) * y;
 	reply[1] = ytrans + Math.sin(theta) * x + Math.cos(theta) * y;
