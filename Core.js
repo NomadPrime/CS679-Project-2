@@ -37,18 +37,32 @@ function start() {
     listener.BeginContact = function(contact){
 	    //FIXME:
 	    //do something?
+		alert("1");
+		bodyA = contact.GetFixtureA().GetBody();
+		bodyB = contact.GetFixtureB().GetBody();
+		bodyA.SetLinearVelocity(new b2Vec2(Math.random()*100,Math.random()*100))
+		bodyB.SetLinearVelocity(new b2Vec2(Math.random()*100,Math.random()*100))
+		//contact.GetFixtureB().GetBody().m_userData.explode();
+		if(typeof(bodyA.m_userData.health) != "undefined"){
+			alert("bodyA.health" + bodyA.health);
+			bodyA.m_userData.health -= 1000;
+		}
+		if(typeof(bodyB.m_userData.health) != "undefined"){
+			bodyB.m_userData.health -= 1000;
+		}
     }
 
     listener.EndContact = function(contact){
 	    //FIXME:
 	    //do something?
+	//	alert("2");
 
     }
 
     listener.PostSolve = function(contact, impulse){
 	    //FIXME:
 	    //do something
-	    alert("enemy collide!");
+	   // alert("enemy collide!");
 
     }
 
@@ -56,6 +70,7 @@ function start() {
     listener.PreSolve = function(contact, impulse){
 	    //FIXME:
 	    //do something
+		//alert("4");
 
     }
 
@@ -68,6 +83,7 @@ function start() {
     function listen() {//account for effects of EventListeners
     	
     }
+	
     
     objectList.push(makeObject(crateType, 80, 39, 0, [1,1]));
    	objectList.push(makeObject(crateType, -1000, 30, Math.random(), [1,1]));
@@ -78,9 +94,10 @@ function start() {
    	objectList.push(makeObject(crateType, 81, 41, 0, [1,1]));
 
 
-	enemyList.push(makeEnemy(82, 43, 0,[1,1]));
-	enemyList.push(makeEnemy(99, 0, 0,[1,1]));
+	//enemyList.push(makeEnemy(82, 43, 0,[1,1]));
 	enemyList.push(makeEnemy(0,0,0,[1,1]));
+	enemyList.push(makeEnemy(50, 0, 0,[1,1]));
+	
 
 
     stuffList.push(makeWeld(objectList[0].body,objectList[2].body,true,200+Math.random()*300));
@@ -101,12 +118,13 @@ function start() {
     objectList[1].body.SetLinearVelocity(new b2Vec2(400+Math.random()*500,(Math.random()-0.5)*40));
     objectList[1].body.SetAngularVelocity((Math.random()-0.5)*60);
     
-    enemyList[0].body.SetLinearVelocity(new b2Vec2(400,50));
-    enemyList[1].body.SetLinearVelocity(new b2Vec2(40,500));
+    enemyList[0].body.SetLinearVelocity(new b2Vec2(10,0));
+    enemyList[1].body.SetLinearVelocity(new b2Vec2(-10,0));
    
     function update() {
     	theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
     	
+		world.SetContactListener(listener);
     	world.Step(1/frameRate, 10, 10);	//advance physics engine
     	for(i = 0; i < objectList.length; i++) {
     		objectList[i].action();

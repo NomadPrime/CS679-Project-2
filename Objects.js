@@ -88,8 +88,8 @@ function makeObject(type, x, y, theta, dims) {	//creates an object with the spec
 	}
 
 	//by default object don't collide with each other unless otherwise specified.
-	obj.fixture.filter.categoryBits = 0;
-	obj.fixture.filter.maskBits = 0;
+	fdef.filter.categoryBits = 0;
+	fdef.filter.maskBits = 0;
 	
 	obj.fixture = obj.body.CreateFixture(fdef);
 	return obj;

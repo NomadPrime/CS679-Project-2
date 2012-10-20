@@ -15,6 +15,9 @@ var b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
 var b2WeldJoint = Box2D.Dynamics.Joints.b2WeldJoint;
 var b2WeldJointDef =  Box2D.Dynamics.Joints.b2WeldJointDef;
 var b2Listener = Box2D.Dynamics.b2ContactListener;
+var b2Segment = Box2D.Collision.b2Segment;
+var b2RayCastInput = Box2D.Collision.b2RayCastInput;
+var b2RayCastOutput = Box2D.Collision.b2RayCastOutput;
 
 //------------------------------//
 //	Global Variables			//
