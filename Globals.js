@@ -19,18 +19,29 @@ var b2WeldJointDef =  Box2D.Dynamics.Joints.b2WeldJointDef;
 //	Global Variables			//
 //------------------------------//
 var frameRate = 60;	//the FPS of the game
-var theCanvas;	//canvas on webpage
-var theContext;	//canvas 2D context
-var world;	//physics engine world
 var mousex = 0;	//x-coordinate of mouse
 var mousey = 0;	//y-coordinate of mouse
-var bdef;// = new b2BodyDef;
-var fdef;// = new b2FixtureDef;
-var jdef;// = new b2WeldJointDef;
 var ddensity = 1000;	//default density
 var dfriction = 0.5;	//default friction
 var drestitution = 0.01;	//default restitution
 var worldSpeed = -10;	//speed of "static" objects in the world
+var purgeFlag = false;	//flags for a purge routine
+//TODO: IMPLEMENT THIS SHIT
+var scale = 10;	//scale between drawing and physics engine
+var sideBuffer = 50;	//buffer on top/bottom before delete border
+var backBuffer = 50;	//buffer in back before delete border
+var frontBuffer = 400;	//buffer in front before delete border
+//TODO: END OF IMPLEMENT NEEDED STUFF
+var theCanvas;	//canvas on webpage
+var theContext;	//canvas 2D context
+var world;	//physics engine world
+var bdef;// = new b2BodyDef;
+var fdef;// = new b2FixtureDef;
+var jdef;// = new b2WeldJointDef;
+var lowxBound = -100;	//low x-axis boundary
+var highxBound = 500;	//high x-axis boundary
+var lowyBound = -100;	//low y-axis boundary
+var highyBound = 180;	//high y-axis boundary
 
 var objectList = [];	//list of free objects
 var enemyList = [];		//list of enemies

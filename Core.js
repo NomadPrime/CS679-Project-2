@@ -80,11 +80,10 @@ function start() {
     
     Player.init();
     
-    
          var debugDraw = new b2DebugDraw();
 			debugDraw.SetSprite(theContext);
 			debugDraw.SetDrawScale(10.0);
-			debugDraw.SetFillAlpha(1);
+			debugDraw.SetFillAlpha(10);
 			debugDraw.SetLineThickness(1.0);
 			debugDraw.SetFlags(b2DebugDraw.e_shapeBit/* | b2DebugDraw.e_jointBit*/);
 			world.SetDebugDraw(debugDraw);
@@ -95,9 +94,19 @@ function start() {
     	world.Step(1/frameRate, 10, 10);	//advance physics engine
     	for(i = 0; i < objectList.length; i++) {
     		objectList[i].action();
+    		if(purgeFlag) {
+    			objectList.sort(cull);
+    			objectList.pop();
+    			purgeFlag = false;
+    		}
     	}
     	for(i = 0; i < stuffList.length; i++) {
     		stuffList[i].action();
+    		if(purgeFlag) {
+    			stuffList.sort(cull);
+    			stuffList.pop();
+    			purgeFlag = false;
+    		}
     	}
     	world.DrawDebugData();
     	world.ClearForces();
@@ -109,8 +118,7 @@ function start() {
     	if(Math.random() >= .99) {
     		crateStack(300, 40+100*(Math.random()-0.5), 6, worldSpeed, 0, (Math.random()-0.5)*20, 1, 1, Math.random()*5, Math.random()*5, 200, 50, 0);
     	}
-    	
-    	
+    	Player.health--;
     	
     	reqFrame(update);	//set up another iteration
     }

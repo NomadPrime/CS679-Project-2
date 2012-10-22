@@ -11,6 +11,7 @@ var anObject = {
 	"timer" : 0,	//used for effect cooldowns
 	"body" : null,	//b2Body of object in physics engine
 	"fixture" : null,	//b2Fixture attached to body(used for removal)
+	"indepObject" : true,	//true unless object is part of a larger entity (player, enemy)
 	"remove" : false,	//used to flag object for removal from lists
 	
 	draw : function() {},	//replaced by draw command of each object type
@@ -30,7 +31,15 @@ var anObject = {
 		}
 		//global effects will go outside first if statement
 		
-		//TODO: Put deletion stuff here (goes out of bounds, kills the fixture, the body, and culls the object from the list)
+		pos = this.body.GetPosition();
+		if((pos.x < lowxBound || pos.x > highxBound || pos.y < lowyBound || pos.y > highyBound) && this.indepObject == true || this.remove) {this.purge();}
+	},
+	
+	purge : function() {
+		this.remove = true;
+		this.body.DestroyFixture(this.fixture);
+		world.DestroyBody(this.body);
+		purgeFlag = true;
 	},
 	
 	ctrForce : function(vector) {	//Applies a force to the body's center, so as not to rotate it.
@@ -99,6 +108,9 @@ function makeObject(type, x, y, theta, dims) {	//creates an object with the spec
 		fdef.shape.SetAsArray(dims, dims.length);
 	//} else if(type == enemyType) {	//TODO: Enemy type stuff goes here
 		
+	} else if(type == playerShieldType) {	//player character "forcefield"
+		//obj.draw = something	//TODO: draw method for this
+		fdef.shape = new b2CircleShape(dims);
 	} else if(type == crateType) {
 		obj.draw = drawCrate;
 		fdef.shape = new b2PolygonShape;

@@ -13,13 +13,13 @@ var bWeld = {
 		if(this.grace > 10) {fracture = this.breakForce * 10; this.grace--;}
 		else if(this.grace > 0) {fracture = this.breakForce / 4; this.grace--;}
 		else {fracture = this.breakForce;}
-		if(this.weld.GetReactionForce(1/frameRate).Length() > fracture)
-		{
-			world.DestroyJoint(this.weld);
-		}
+		if(this.weld == null) {this.remove = true;}	//in case weld was implicitly destroyed with its object.
+		if(this.weld.GetReactionForce(1/frameRate).Length() > fracture || this.remove) {this.purge();}
 	},
 	purge : function() {	//removes object from the object list
-		
+		this.remove = true;
+		world.DestroyJoint(this.weld);
+		purgeFlag = true;
 	}
 };
 
