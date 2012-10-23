@@ -17,7 +17,7 @@ var anObject = {
 	draw : function() {},	//replaced by draw command of each object type
 	
 	action : function() {	//updates object based on effects acting on it and global effects acting on everything.
-		if(this.effect !== 0) {//skips everything if no effect
+		if(this.effect !== 0) {	//skips everything if no effect
 			if(this.effect == railDriverEffect) {	//continuously applies force using the given vector
 				this.ctrForce(this.data);
 			} else if(this.effect == stasisEffect) {	//nulls velocity of object, after initial collision won't move

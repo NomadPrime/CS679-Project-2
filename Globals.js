@@ -14,6 +14,7 @@ var b2CircleShape = Box2D.Collision.Shapes.b2CircleShape;
 var b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
 var b2WeldJoint = Box2D.Dynamics.Joints.b2WeldJoint;
 var b2WeldJointDef =  Box2D.Dynamics.Joints.b2WeldJointDef;
+var b2ContactListener = Box2D.Dynamics.b2ContactListener;
 
 //------------------------------//
 //	Global Variables			//
@@ -32,16 +33,17 @@ var sideBuffer = 50;	//buffer on top/bottom before delete border
 var backBuffer = 50;	//buffer in back before delete border
 var frontBuffer = 400;	//buffer in front before delete border
 //TODO: END OF IMPLEMENT NEEDED STUFF
+var damageThreshold = 50;	//number of N of force needed to do damage (damage calculated in N after this point)
 var theCanvas;	//canvas on webpage
 var theContext;	//canvas 2D context
 var world;	//physics engine world
 var bdef;// = new b2BodyDef;
 var fdef;// = new b2FixtureDef;
 var jdef;// = new b2WeldJointDef;
-var lowxBound = -100;	//low x-axis boundary
+var lowxBound = -20;	//low x-axis boundary
 var highxBound = 500;	//high x-axis boundary
-var lowyBound = -100;	//low y-axis boundary
-var highyBound = 180;	//high y-axis boundary
+var lowyBound = -20;	//low y-axis boundary
+var highyBound = 160;	//high y-axis boundary
 
 var objectList = [];	//list of free objects
 var enemyList = [];		//list of enemies

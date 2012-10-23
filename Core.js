@@ -53,6 +53,25 @@ function start() {
     	
     }
     
+    
+    var collider = new b2ContactListener;
+    collider.BeginContact = function(contact) {
+    	
+    }
+    collider.EndContact = function(contact) {
+    	
+    }
+    collider.PostSolve = function(contact, impulse) {
+    	
+    }
+    collider.PreSolve = function(contact, oldManifold) {
+    	
+    }
+    this.world.SetContactListener(collider);
+    
+    
+    
+    //TODO: DEMO CODE
     objectList.push(makeObject(crateType, 80, 39, 0, [1,1]));
    	objectList.push(makeObject(crateType, -1000, 30, Math.random(), [1,1]));
    	objectList.push(makeObject(crateType, 80, 40, 0, [1,1]));
@@ -77,6 +96,7 @@ function start() {
    	//objectList[0].timer = 60;
     objectList[1].body.SetLinearVelocity(new b2Vec2(400+Math.random()*500,(Math.random()-0.5)*40));
     objectList[1].body.SetAngularVelocity((Math.random()-0.5)*60);
+    //TODO: END OF DEMO CODE
     
     Player.init();
     
@@ -115,11 +135,8 @@ function start() {
     	}
     	Player.draw();
     	
-    	if(Math.random() >= .99) {
-    		crateStack(300, 40+100*(Math.random()-0.5), 6, worldSpeed, 0, (Math.random()-0.5)*20, 1, 1, Math.random()*5, Math.random()*5, 200, 50, 0);
-    	}
-    	Player.health--;
     	
+    	runEvents();
     	reqFrame(update);	//set up another iteration
     }
     update();
