@@ -31,24 +31,73 @@ function start() {
     fdef.restitution = drestitution;
     fdef.shape = new b2CircleShape(1.0);
     jdef = new b2WeldJointDef;
-    
+	
+	var wallDefs = new Array(
+	  {x:theCanvas.width,y:0,w:theCanvas.width ,h:1}, //top
+      {x:theCanvas.width,y:theCanvas.height,w:theCanvas.width ,h:1}, //bottom
+      {x:0,y:theCanvas.height,w:1 ,h:theCanvas.height}, //left
+      {x:theCanvas.width,y:theCanvas.height,w:1 ,h:theCanvas.height} //right
+    ); 
+	wallDef = new b2BodyDef;
+	wallDef.linearDamping = 0.2;
+	var scaleFactor = 20;
+	var walls = new Array();
+	var wallFixture = new b2FixtureDef;
+	wallFixture.shape = new b2PolygonShape;
+	wallFixture.restitution = 1;
+	for (var i = 0; i < wallDefs.length; i++){
+		//wallDef.position.Set(wallDefs[i].x/scaleFactor, wallDefs[i].y/scaleFactor);
+		if(i == 0){
+		wallDef.position.Set(wallDefs[i].x/scaleFactor + 100, wallDefs[i].y/scaleFactor + 100);
+		}
+		if(i == 1){
+		wallDef.position.Set(wallDefs[i].x/scaleFactor + 100, wallDefs[i].y/scaleFactor - 200);
+		}
+		if(i == 2){
+		wallDef.position.Set(wallDefs[i].x/scaleFactor + 100, wallDefs[i].y/scaleFactor );
+		}
+		if(i == 3){
+		wallDef.position.Set(wallDefs[i].x/scaleFactor - 100, wallDefs[i].y/scaleFactor );
+		}
+		wallDef.type = b2Body.b2_staticBody;
+		wallFixture.shape.SetAsBox(wallDefs[i].w/scaleFactor, wallDefs[i].h/scaleFactor);
+		var wallBody = world.CreateBody(wallDef).CreateFixture(wallFixture);
+		wallBody.m_userData = "whatever";
+		wallBody.draw = function() {
+		this.body = this;
+		var pos=this.body.GetPosition();
+	var pos=this.body.GetPosition();
+	var theta=this.body.GetAngle();
+	theContext.strokeStyle = "#353505";
+	theContext.lineWidth = 100;
+	hwidth = this.dims[0] / 2;
+	hheight = this.dims[1] / 2;
+	theContext.beginPath();
+	theContext.moveTo((pos.x+hheight*Math.cos(theta)+hwidth*Math.cos(theta-Math.PI/2))*10,(pos.y+hheight*Math.sin(theta)+hwidth*Math.sin(theta-Math.PI/2))*10);
+		theContext.lineTo((pos.x-hheight*Math.cos(theta)+hwidth*Math.cos(theta-Math.PI/2))*10,(pos.y-hheight*Math.sin(theta)+hwidth*Math.sin(theta-Math.PI/2))*10);
+		theContext.lineTo((pos.x-hheight*Math.cos(theta)-hwidth*Math.cos(theta-Math.PI/2))*10,(pos.y-hheight*Math.sin(theta)-hwidth*Math.sin(theta-Math.PI/2))*10);
+		theContext.lineTo((pos.x+hheight*Math.cos(theta)-hwidth*Math.cos(theta-Math.PI/2))*10,(pos.y+hheight*Math.sin(theta)-hwidth*Math.sin(theta-Math.PI/2))*10);
+	theContext.closePath();
+	theContext.stroke();
+	theContext.fill();
+	}
+	}
     var listener = new b2Listener;
 
     listener.BeginContact = function(contact){
 	    //FIXME:
 	    //do something?
-		alert("1");
 		bodyA = contact.GetFixtureA().GetBody();
 		bodyB = contact.GetFixtureB().GetBody();
 		bodyA.SetLinearVelocity(new b2Vec2(Math.random()*100,Math.random()*100))
 		bodyB.SetLinearVelocity(new b2Vec2(Math.random()*100,Math.random()*100))
 		//contact.GetFixtureB().GetBody().m_userData.explode();
-		if(typeof(bodyA.m_userData.health) != "undefined"){
-			alert("bodyA.health" + bodyA.health);
+		console.log(bodyA);
+		if(bodyA.m_userData != null && typeof(bodyA.m_userData.health) != "undefined"){
 			bodyA.m_userData.health -= 1000;
 		}
-		if(typeof(bodyB.m_userData.health) != "undefined"){
-			bodyB.m_userData.health -= 1000;
+		if(bodyB.m_userData != null && typeof(bodyB.m_userData.health) != "undefined"){
+			bodyB.m_userData.health -= 100;
 		}
     }
 
@@ -95,8 +144,8 @@ function start() {
 
 
 	//enemyList.push(makeEnemy(82, 43, 0,[1,1]));
-	enemyList.push(makeEnemy(0,0,0,[1,1]));
-	enemyList.push(makeEnemy(50, 0, 0,[1,1]));
+	enemyList.push(makeEnemy(10,10,10,[10,10]));
+	enemyList.push(makeEnemy(50, 10, 10,[10,10]));
 	
 
 
@@ -143,7 +192,7 @@ function start() {
 
 	for(i = 0; i < enemyList.length; i++){
 		enemyList[i].draw();
-}
+    }
     	if(Math.random() >= .99) {
     		crateStack(400+100*Math.random(), 40+100*(Math.random()-0.5), 6, worldSpeed, 0, Math.random()*5, 1, 1, Math.random()*5, Math.random()*5, 30, 50, 0);
     	}

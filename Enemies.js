@@ -51,8 +51,10 @@ function makeEnemy(x, y, theta, dims){
 	bdef.position.Set(x,y);
 	bdef.angle = theta;
 	bdef.userData = enemy;
+	fdef.shape = new b2PolygonShape;
+	fdef.shape.SetAsBox(dims[0]/2,dims[1]/2);
 	enemy.body = world.CreateBody(bdef);
-	
+	enemy.fixture = enemy.body.CreateFixture(fdef);
 
 	enemy.health = enemyInitHealth;
 
@@ -151,8 +153,16 @@ function makeEnemy(x, y, theta, dims){
 			var output = new b2RayCastOutput;
 			input.p1 = segment.p2;
 			input.p2 = segment.p1;
-			input.maxFracktion = 1;
+			input.maxFraction = 1;
 			
+			var f = new b2FixtureDef();
+		    for(f = body.GetFixtureList(); f; f = f.GetNext()) {
+			if(!f.RayCast(output, input))
+				continue;
+			else if(output.fraction < closestFraction)   {
+				closestFraction = output.fraction;
+			}
+		    }
 			var intersectionPoint = new b2Vec2();
 			var dist = Math.sqrt((segment.p1.x - segment.p2.x)*(segment.p1.x - segment.p2.x) 
 				+ (segment.p1.y - segment.p2.y)*(segment.p1.y - segment.p2.y));
@@ -187,17 +197,20 @@ function makeEnemy(x, y, theta, dims){
 			for(j=0; j<tmp.length; j++){
 				var v = new b2Vec2(tmp[j].x, tmp[j].y);
 				tmp2.push(v);
-				console.log(v);
 			}
 			result.push(tmp2);
 		}
 		
 		console.log(result);
 		world.DestroyBody(body);
+		var idx = enemyList.indexOf(this);
+		if(idx != -1){
+			enemyList.splice(idx, 1);
+		}
 		for(i=0;i<result.length;i++){
 			var bd = new b2BodyDef;
 			bd.type = b2Body.b2_dynamicBody;
-		//	bd.position.Set(x,y);
+			bd.position.Set(x,y);
 			
 			var fx = new b2FixtureDef;
 			fx.density = 12;
@@ -209,14 +222,10 @@ function makeEnemy(x, y, theta, dims){
 			
 			console.log(i);
 			
-			console.log("test4");
 			var newbody = world.CreateBody(bd);
-			console.log("test3");
-			console.log(fx);
 			newbody.CreateFixture(fx);
-			console.log("test2");
 			
-			newobj = makeObject(enemyType, 0, 0, 0, [1,1]);
+			newobj = makeObject(enemyType, , 0, 0, [1,1]);
 			newbody.userData = newobj;
 			newobj.body = newbody;
 			newbody.ApplyImpulse(new b2Vec2(0,-20), segment.p1);
