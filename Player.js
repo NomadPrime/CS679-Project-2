@@ -97,7 +97,7 @@ var Player = {
     	    }
 		}
 	},
-	
+	/*
 	draw : function() {	//draws the player character
 		var cor;
 		theContext.strokeStyle = "#000000";
@@ -113,6 +113,23 @@ var Player = {
 			theContext.stroke();
 		}
 		
+	},*/
+	
+	draw : function() {
+		var scale = 5;
+		var pos = this.parts[0].body.GetPosition();
+		//var theta = this.body.GetAngle();
+		var dims = [2,2];
+		//FIXME: add colors
+		//FIXME: add rotation
+		var myVertices = [ -dims[0]/2/scale, dims[1]/2/scale, 0, //left-top
+				 dims[0]/2/scale, dims[1]/2/scale, 0, //right-top
+				 dims[0]/2/scale, -dims[1]/2/scale, 0, //right-bottom
+				 -dims[0]/2/scale, -dims[1]/2/scale, 0 ]; //left-bottom
+				 
+		pos.x = pos.x * 10;
+		pos.y = pos.y * 10;
+		addSquare(pos, myVertices);
 	},
 	
 	die : function() {	//activates on player death

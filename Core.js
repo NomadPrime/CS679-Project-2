@@ -1,5 +1,7 @@
 //Documentation stuff here
 function start() {
+	webGLStart();
+	
 	//RequestAnimationFrame code from flocking demo
 	var reqFrame = window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
@@ -100,16 +102,22 @@ function start() {
     
     Player.init();
     
-         var debugDraw = new b2DebugDraw();
-			debugDraw.SetSprite(theContext);
-			debugDraw.SetDrawScale(10.0);
-			debugDraw.SetFillAlpha(10);
-			debugDraw.SetLineThickness(1.0);
-			debugDraw.SetFlags(b2DebugDraw.e_shapeBit/* | b2DebugDraw.e_jointBit*/);
-			world.SetDebugDraw(debugDraw);
+       
     function update() {
-    	theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
-    	
+    //	theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
+    	//webGLDraw();
+		 prepareScene();
+		/* vertices = [
+             1.0,  1.0,  0.0,
+            -1.0,  1.0,  0.0,
+             1.0, -1.0,  0.0,
+            -1.5, -1.0,  0.0
+        ];
+		var position = new Object;
+		position.x = 1.5;
+		position.y = 0.0;
+		addSquare(position, vertices);
+		*/
     	Player.action();
     	world.Step(1/frameRate, 10, 10);	//advance physics engine
     	for(i = 0; i < objectList.length; i++) {
@@ -128,10 +136,10 @@ function start() {
     			purgeFlag = false;
     		}
     	}
-    	world.DrawDebugData();
+
     	world.ClearForces();
     	for(i = 0; i < objectList.length; i++) {
-    		//objectList[i].draw();
+    		objectList[i].draw();
     	}
     	Player.draw();
     	

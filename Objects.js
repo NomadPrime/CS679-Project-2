@@ -57,7 +57,54 @@ var stasisEffect = 2385;	//Stasis: object is frozen, will only move slightly whe
 var crateType = 1482;	//crate type code
 //dims[0] = width
 //dims[1] = height
+var scale = 10;
+function webGLDraw2(){
+	var pos = this.body.GetPosition();
+	var theta = this.body.GetAngle();
+	var dims = this.dims;
+	//FIXME: add colors
+	//FIXME: add rotation
+	var vertices = [ -dims[0]/2/scale, dims[1]/2/scale, 0, //left-top
+				 dims[0]/2/scale, dims[1]/2/scale, 0, //right-top
+				 dims[0]/2/scale, -dims[1]/2/scale, 0, //right-bottom
+				 -dims[0]/2/scale, -dims[1]/2/scale, 0 ]; //left-bottom
+	/*			 
+	pos.x = pos.x * 10;
+	pos.y = pos.y * 10;
+	*/
+	addSquare(pos, vertices);
+}
 
+function webGLDraw(){
+	var scale = 5;
+	var pos=this.body.GetPosition();
+	var theta=this.body.GetAngle();
+	var cor;
+	hwidth = this.dims[0] / 2;
+	hheight = this.dims[1] / 2;
+	var vertices = [];
+	cor = coordTrans(hwidth,hheight,pos.x,pos.y,theta);
+	vertices.push(cor[0]*10/scale);
+	vertices.push(cor[1]*10/scale);
+    vertices.push(0);
+	cor = coordTrans(-hwidth,hheight,pos.x,pos.y,theta);
+	vertices.push(cor[0]*10/scale);
+	vertices.push(cor[1]*10/scale);
+    vertices.push(0);
+	cor = coordTrans(-hwidth,-hheight,pos.x,pos.y,theta);
+	vertices.push(cor[0]*10/scale);
+	vertices.push(cor[1]*10/scale);
+    vertices.push(0);
+	cor = coordTrans(hwidth,-hheight,pos.x,pos.y,theta);
+	vertices.push(cor[0]*10/scale);
+	vertices.push(cor[1]*10/scale);
+    vertices.push(0);
+	
+	pos.x = pos.x / 100;
+	pos.y = pos.y / 100;
+	addSquare(pos, vertices);
+	
+}
 function drawCrate() {	//draws a crate. replace with WebGL code later.
 	var pos=this.body.GetPosition();
 	var theta=this.body.GetAngle();
@@ -103,16 +150,19 @@ function makeObject(type, x, y, theta, dims) {	//creates an object with the spec
 	obj.body = world.CreateBody(bdef);
 	if(type == playerType) {	//player type objects are polygons from an array of vertices
 		//TODO: Make the instantiation code here using a line from pvertices
-		obj.draw = playerPartDraw;
+	//	obj.draw = playerPartDraw;
+		obj.draw = webGLDraw;
 		fdef.shape = new b2PolygonShape;
 		fdef.shape.SetAsArray(dims, dims.length);
 	//} else if(type == enemyType) {	//TODO: Enemy type stuff goes here
 		
 	} else if(type == playerShieldType) {	//player character "forcefield"
 		//obj.draw = something	//TODO: draw method for this
+		obj.draw = webGLDraw;
 		fdef.shape = new b2CircleShape(dims);
 	} else if(type == crateType) {
-		obj.draw = drawCrate;
+		//obj.draw = drawCrate;
+		obj.draw = webGLDraw;
 		fdef.shape = new b2PolygonShape;
 		fdef.shape.SetAsBox(dims[0]/2,dims[1]/2);
 	}
