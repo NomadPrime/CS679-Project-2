@@ -7,20 +7,25 @@
 
     precision mediump float;
 
-
+    varying lowp vec4 vColor;
     void main(void) {
-        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        //gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+		gl_FragColor = vColor;
     }
 </script>
 
 <script id="shader-vs" type="x-shader/x-vertex">
     attribute vec3 aVertexPosition;
+	attribute vec4 aVertexColor;
 
     uniform mat4 uMVMatrix;
     uniform mat4 uPMatrix;
+	
+	varying lowp vec4 vColor;
 
     void main(void) {
         gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+		vColor = aVertexColor;
     }
 </script>
 
@@ -96,6 +101,9 @@
 
         shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
         gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+		
+		vertexColorAttribute = gl.getAttribLocation(shaderProgram, "aVertexColor");
+		gl.enableVertexAttribArray(vertexColorAttribute);
 
         shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
         shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
@@ -113,7 +121,9 @@
 
 
     var triangleVertexPositionBuffer;
+	var triangleVertexColorBuffer;
     var squareVertexPositionBuffer;
+	var squareVertexColorBuffer;
 
     function initBuffers() {
       
@@ -130,17 +140,38 @@
         squareVertexPositionBuffer.numItems = 4;
     }
 
-    function addSquare(position, vertices){
+    function addSquare(position, vertices, colors){
+		if(typeof(colors) === 'undefined'){
+			colors = [
+				1.0,  1.0,  1.0,  1.0,    // white
+				1.0,  0.0,  0.0,  1.0,    // red
+				0.0,  1.0,  0.0,  1.0,    // green
+				0.0,  0.0,  1.0,  1.0     // blue
+			];
+		}
+		
 		squareVertexPositionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
         squareVertexPositionBuffer.itemSize = 3;
         squareVertexPositionBuffer.numItems = 4;
+		
+		squareVertexColorBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexColorBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+		
+		
+		
 		pMatrix = okMat4Proj(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0)
 		mvMatrix = okMat4Trans(position.x, position.y, -17.0);
 		gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
         gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-        setMatrixUniforms();
+        
+	    gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexColorBuffer);
+		gl.vertexAttribPointer(vertexColorAttribute, 4, gl.FLOAT, false, 0, 0);
+		
+		
+		setMatrixUniforms();
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems);
 	
 	}
