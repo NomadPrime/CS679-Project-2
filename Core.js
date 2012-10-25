@@ -12,14 +12,6 @@ function start() {
     theCanvas = document.getElementById("canvas");
     theContext = theCanvas.getContext("2d");
     
-    
-    //TODO: Used to debug the code. Delete when done.
-    function spam(otpt) {
-    	dbg = document.getElementById("debugtext");
-    	dbg.innerHTML = otpt;
-    }
-    //TODO: End of debug element.
-    
     //world created with 0 gravity, and sleep is disabled
     world = new b2World(new b2Vec2(0,0),false);
     //properties of objects
@@ -49,10 +41,15 @@ function start() {
     }, false);
     window.addEventListener("keyup", function (e) { delete keysDown[e.keyCode]; }, false);
     
+    var mouseDown, click;
+    document.addEventListener("mousedown", function(e) {click = true; mouseDown = true;}, false);
+    document.addEventListener("mousemove", function(e) {mousex = (e.clientX - theCanvas.offsetLeft) / scale; mousey = (e.clientY - theCanvas.offsetTop) / scale;}, false);
+    document.addEventListener("mouseup", function() {mouseDown = false;}, false);
+    
     function listen() {//account for effects of EventListeners
     	
     }
-    
+
     
     var collider = new b2ContactListener;
     collider.BeginContact = function(contact) {
@@ -62,13 +59,15 @@ function start() {
     	
     }
     collider.PostSolve = function(contact, impulse) {
-    	
+    	b1 = contact.GetFixtureA().GetBody().GetUserData();
+    	b2 = contact.GetFixtureB().GetBody().GetUserData();
+    	if(b1.type == playerShieldType) {damage(b1,b2,impulse);}
+    	else if(b2.type == playerShieldType) {damage(b2,b1,impulse);}
     }
     collider.PreSolve = function(contact, oldManifold) {
     	
     }
     this.world.SetContactListener(collider);
-    
     
     
     //TODO: DEMO CODE
@@ -98,11 +97,15 @@ function start() {
     objectList[1].body.SetAngularVelocity((Math.random()-0.5)*60);
     //TODO: END OF DEMO CODE
     
+    
+    
+         
     Player.init();
+    
     
          var debugDraw = new b2DebugDraw();
 			debugDraw.SetSprite(theContext);
-			debugDraw.SetDrawScale(10.0);
+			debugDraw.SetDrawScale(scale);
 			debugDraw.SetFillAlpha(10);
 			debugDraw.SetLineThickness(1.0);
 			debugDraw.SetFlags(b2DebugDraw.e_shapeBit/* | b2DebugDraw.e_jointBit*/);
@@ -133,9 +136,9 @@ function start() {
     	for(i = 0; i < objectList.length; i++) {
     		//objectList[i].draw();
     	}
-    	Player.draw();
-    	
-    	
+    	//Player.draw();
+    	//TODO: Click stuff
+    	click = false;
     	runEvents();
     	reqFrame(update);	//set up another iteration
     }

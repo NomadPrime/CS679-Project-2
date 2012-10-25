@@ -34,7 +34,7 @@ var pvers = [	//vertices of all bodies of player
 ];
 
 var Player = {
-	"size" : 5,	//controls size of player
+	"size" : 3.5,	//controls size of player
 	"thrustMod" : 10000,	//maximum thrust force in any direction
 	"maxHealth" : 500,	//player maximum health
 	"health" : 0,	//player health
@@ -69,15 +69,19 @@ var Player = {
         	pos = this.shield.body.GetPosition();
         	if (pos.y < 5) {	//Up correction
         		this.shield.ctrForce(new b2Vec2(this.thrustMod*(5-pos.y)*-Math.sin(theta),this.thrustMod*(5-pos.y)*Math.cos(theta)));
+        		if(pos.y < 0) {this.shield.body.SetLinearVelocity(new b2Vec2(this.shield.body.GetLinearVelocity().x,5));}
         	}
-        	if (pos.y > 75) {	//Down correction
-				this.shield.ctrForce(new b2Vec2(-this.thrustMod*(pos.y-75)*-Math.sin(theta),-this.thrustMod*(pos.y-75)*Math.cos(theta)));
+        	if (pos.y > 45) {	//Down correction
+				this.shield.ctrForce(new b2Vec2(-this.thrustMod*(pos.y-45)*-Math.sin(theta),-this.thrustMod*(pos.y-45)*Math.cos(theta)));
+        		if(pos.y > 50) {this.shield.body.SetLinearVelocity(new b2Vec2(this.shield.body.GetLinearVelocity().x,-5));}
     	    }
-    	    if (pos.x > 135) {	//Left correction
-				this.shield.ctrForce(new b2Vec2(-this.thrustMod*(pos.x-135)*Math.cos(theta),-this.thrustMod*(pos.x-135)*Math.sin(theta)));
+    	    if (pos.x > 145) {	//Left correction
+				this.shield.ctrForce(new b2Vec2(-this.thrustMod*(pos.x-145)*Math.cos(theta),-this.thrustMod*(pos.x-145)*Math.sin(theta)));
+        		if(pos.x > 150) {this.shield.body.SetLinearVelocity(new b2Vec2(-5,this.shield.body.GetLinearVelocity().y));}
     	    }
     	    if (pos.x < 5) {	//Right correction
 				this.shield.ctrForce(new b2Vec2(this.thrustMod*(5-pos.x)*Math.cos(theta),this.thrustMod*(5-pos.x)*Math.sin(theta)));
+        		if(pos.x < 0) {this.shield.body.SetLinearVelocity(new b2Vec2(5,this.shield.body.GetLinearVelocity().y));}
     	    }
 			theta = this.parts[0].body.GetAngle();
 			if (38 in keysDown || 87 in keysDown) {	//Up
@@ -104,7 +108,7 @@ var Player = {
 		for(i = 0; i < pvers.length; i++){
 			theContext.beginPath();
 			cor = coordTrans(pvers[i][0].x,pvers[i][0].y,this.parts[0].body.GetPosition().x,this.parts[0].body.GetPosition().y,this.parts[0].body.GetAngle());
-			theContext.moveTo(cor[0]*10,cor[1]*10);
+			theContext.moveTo(cor[0]*scale,cor[1]*scale);
 			for(j = 1; j < pvers[i].length; j++){
 				cor = coordTrans(pvers[i][j].x,pvers[i][j].y,this.parts[0].body.GetPosition().x,this.parts[0].body.GetPosition().y,this.parts[0].body.GetAngle());
 				theContext.lineTo(cor[0]*10,cor[1]*10);

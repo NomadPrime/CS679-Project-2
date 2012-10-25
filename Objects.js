@@ -121,6 +121,20 @@ function makeObject(type, x, y, theta, dims) {	//creates an object with the spec
 }
 
 //------------------------------//
+//	DAMAGE CODE					//
+//------------------------------//
+function damage(b1, b2, impulse) {
+	if(b1.type == playerShieldType) {	//collisions with player shield
+		var imp = impulse.normalImpulses;
+		var hit = Math.sqrt(imp[0]*imp[0]+imp[1]*imp[1])/1000-pDamageThreshold;
+		if(hit > 0) {
+			Player.health -= hit;
+		}
+	}
+}
+
+
+//------------------------------//
 //	COORDINATE TRANSFORMATION	//
 //	Pass it an x,y pair,		//
 //	translation xy cors and an	//
@@ -131,4 +145,53 @@ function coordTrans(x, y, xtrans, ytrans, theta) {
 	reply[0] = xtrans + Math.cos(theta) * x - Math.sin(theta) * y;
 	reply[1] = ytrans + Math.sin(theta) * x + Math.cos(theta) * y;
 	return reply;
+}
+
+//	special color class used for doing math with colors
+var aColor = {
+	"R" : 0,
+	"G" : 0,
+	"B" : 0,
+	"chart" : '0123456789ABCDEF',	//used for translating numbers and hex values
+	
+	flush : function() {	//makes sure all values are within bounds
+		if(this.R > 255) this.R = 255;
+		if(this.G > 255) this.G = 255;
+		if(this.B > 255) this.B = 255;
+		if(this.R < 0) this.R = 0;
+		if(this.G < 0) this.G = 0;
+		if(this.B < 0) this.B = 0;
+	},
+	
+	add : function(Rplus,Gplus,Bplus) {	//returns a new color object with this object's values plus the given values
+		Rplus = Math.floor(Rplus);
+		Gplus = Math.floor(Gplus);
+		Bplus = Math.floor(Bplus);
+		return mColor(this.R+Rplus,this.G+Gplus,this.B+Bplus);
+	},
+	
+	p : function() {	//returns string of color in hex code
+		var a = this.b2h(Math.floor(this.R / 16));
+		var b = this.b2h(this.R % 16);
+		var c = this.b2h(Math.floor(this.G / 16));
+		var d = this.b2h(this.G % 16);
+		var e = this.b2h(Math.floor(this.B / 16));
+		var f = this.b2h(this.B % 16);
+		return '#'+a+b+c+d+e+f;
+	},
+	
+	b2h : function(n) {	//converts number from 1 to 16 into a hex letter
+		var nybHexString = "0123456789ABCDEF";
+		return String(nybHexString.substr((n >> 4) & 0x0F,1)) + nybHexString.substr(n & 0x0F,1);
+	}
+};
+function mColor(R,G,B) {	//returns a new color object
+	Empty = function() {};
+	Empty.prototype = aColor;
+	col = new Empty();
+	col.R = Math.floor(R);
+	col.G = Math.floor(G);
+	col.B = Math.floor(B);
+	col.flush();
+	return col;
 }
