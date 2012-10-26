@@ -16,6 +16,23 @@ var pvers = [	//vertices of all bodies of player
 [[-.210,-.500], [-.500,-.210], [-.360,-.151], [-.151,-.360]],
 [[-.151,-.360], [-.360,-.151], [-.143,-.060], [-.060,-.143]],
 ];*/
+/*
+var pvers = [	//vertices of all bodies of player
+[new b2Vec2(0.025,0.058), new b2Vec2(-.025,0.058), new b2Vec2(-.143,-.060), new b2Vec2(0.143,-.060)],
+[new b2Vec2(0.143,-.060), new b2Vec2(-.143,-.060), new b2Vec2(-.060,-.143), new b2Vec2(0.060,-.143)],
+[new b2Vec2(-.058,0.025), new b2Vec2(-.500,0.210), new b2Vec2(-.500,-.210), new b2Vec2(-.143,-.060)],
+[new b2Vec2(-.025,0.058), new b2Vec2(-.210,0.500), new b2Vec2(-.500,0.210), new b2Vec2(-.058,0.025)],
+[new b2Vec2(0.210,0.500), new b2Vec2(-.210,0.500), new b2Vec2(-.025,0.058), new b2Vec2(0.025,0.058)],
+[new b2Vec2(0.500,0.210), new b2Vec2(0.210,0.500), new b2Vec2(0.025,0.058), new b2Vec2(0.058,0.025)],
+[new b2Vec2(0.500,0.210), new b2Vec2(0.058,0.025), new b2Vec2(0.143,-.060), new b2Vec2(0.500,-.210)],
+[new b2Vec2(0.360,-.151), new b2Vec2(0.151,-.360), new b2Vec2(0.210,-.500), new b2Vec2(0.500,-.210)],
+[new b2Vec2(0.143,-.060), new b2Vec2(0.060,-.143), new b2Vec2(0.151,-.360), new b2Vec2(0.360,-.151)],
+[new b2Vec2(0.151,-.360), new b2Vec2(-.151,-.360), new b2Vec2(-.210,-.500), new b2Vec2(0.210,-.500)],
+[new b2Vec2(0.060,-.143), new b2Vec2(-.060,-.143), new b2Vec2(-.151,-.360), new b2Vec2(0.151,-.360)],
+[new b2Vec2(-.151,-.360), new b2Vec2(-.360,-.151), new b2Vec2(-.500,-.210), new b2Vec2(-.210,-.500)],
+[new b2Vec2(-.060,-.143), new b2Vec2(-.143,-.060), new b2Vec2(-.360,-.151), new b2Vec2(-.151,-.360)],
+];
+*/
 
 var pvers = [	//vertices of all bodies of player
 [new b2Vec2(0.025,0.058), new b2Vec2(-.025,0.058), new b2Vec2(-.143,-.060), new b2Vec2(0.143,-.060)],
@@ -32,7 +49,6 @@ var pvers = [	//vertices of all bodies of player
 [new b2Vec2(-.151,-.360), new b2Vec2(-.360,-.151), new b2Vec2(-.500,-.210), new b2Vec2(-.210,-.500)],
 [new b2Vec2(-.060,-.143), new b2Vec2(-.143,-.060), new b2Vec2(-.360,-.151), new b2Vec2(-.151,-.360)],
 ];
-
 var Player = {
 	"size" : 5,	//controls size of player
 	"thrustMod" : 10000,	//maximum thrust force in any direction
@@ -60,6 +76,42 @@ var Player = {
 			jdef.collideConnected = false;
 			this.joints.push(world.CreateJoint(jdef));
 		}
+	},
+	
+	draw : function() {
+		var scale = 2;
+		var pos = this.parts[0].body.GetPosition();
+		var cor;
+		//var theta = this.body.GetAngle();
+		var dims = [2,2];
+		//FIXME: add colors
+		
+		var myVertices = [];
+		for(i = 0; i < pvers.length; i++){
+			myVertices = [];
+			for(j = 0; j < pvers[i].length; j++){
+				cor = coordTrans(pvers[i][j].x,pvers[i][j].y,this.parts[0].body.GetPosition().x,this.parts[0].body.GetPosition().y,this.parts[0].body.GetAngle());
+				//cor = coordTrans(pvers[i][j].x,pvers[i][j].y,0,0,this.parts[0].body.GetAngle());
+				myVertices.push(cor[0]/scale);
+				myVertices.push(cor[1]/scale);
+				myVertices.push(0/scale);
+			}
+			//pos.x = this.parts[0].body.GetPosition().x * 5;
+			//pos.y = -this.parts[0].body.GetPosition().y * 5;
+			pos.x = 0;
+			pos.y = 0;
+			addSquare(pos, myVertices);
+		}
+		/*	
+		var myVertices = [ -dims[0]/2/scale, dims[1]/2/scale, 0, //left-top
+				 dims[0]/2/scale, dims[1]/2/scale, 0, //right-top
+				 dims[0]/2/scale, -dims[1]/2/scale, 0, //right-bottom
+				 -dims[0]/2/scale, -dims[1]/2/scale, 0 ]; //left-bottom
+				 
+		pos.x = pos.x * 10;
+		pos.y = pos.y * 10;
+		addSquare(pos, myVertices);
+		*/
 	},
 	
 	action : function() {
@@ -97,40 +149,8 @@ var Player = {
     	    }
 		}
 	},
-	/*
-	draw : function() {	//draws the player character
-		var cor;
-		theContext.strokeStyle = "#000000";
-		for(i = 0; i < pvers.length; i++){
-			theContext.beginPath();
-			cor = coordTrans(pvers[i][0].x,pvers[i][0].y,this.parts[0].body.GetPosition().x,this.parts[0].body.GetPosition().y,this.parts[0].body.GetAngle());
-			theContext.moveTo(cor[0]*10,cor[1]*10);
-			for(j = 1; j < pvers[i].length; j++){
-				cor = coordTrans(pvers[i][j].x,pvers[i][j].y,this.parts[0].body.GetPosition().x,this.parts[0].body.GetPosition().y,this.parts[0].body.GetAngle());
-				theContext.lineTo(cor[0]*10,cor[1]*10);
-			}
-			theContext.closePath();
-			theContext.stroke();
-		}
-		
-	},*/
 	
-	draw : function() {
-		var scale = 5;
-		var pos = this.parts[0].body.GetPosition();
-		//var theta = this.body.GetAngle();
-		var dims = [2,2];
-		//FIXME: add colors
-		//FIXME: add rotation
-		var myVertices = [ -dims[0]/2/scale, dims[1]/2/scale, 0, //left-top
-				 dims[0]/2/scale, dims[1]/2/scale, 0, //right-top
-				 dims[0]/2/scale, -dims[1]/2/scale, 0, //right-bottom
-				 -dims[0]/2/scale, -dims[1]/2/scale, 0 ]; //left-bottom
-				 
-		pos.x = pos.x * 10;
-		pos.y = pos.y * 10;
-		addSquare(pos, myVertices);
-	},
+	
 	
 	die : function() {	//activates on player death
 		/*
@@ -151,6 +171,25 @@ var Player = {
 			temp.Multiply((Math.random())*this.parts[i].body.GetMass());
 			this.parts[i].ctrForce(temp);
 		}
+		
+		/*
+	draw : function() {	//draws the player character
+		var cor;
+		theContext.strokeStyle = "#000000";
+		for(i = 0; i < pvers.length; i++){
+			theContext.beginPath();
+			cor = coordTrans(pvers[i][0].x,pvers[i][0].y,this.parts[0].body.GetPosition().x,this.parts[0].body.GetPosition().y,this.parts[0].body.GetAngle());
+			theContext.moveTo(cor[0]*10,cor[1]*10);
+			for(j = 1; j < pvers[i].length; j++){
+				cor = coordTrans(pvers[i][j].x,pvers[i][j].y,this.parts[0].body.GetPosition().x,this.parts[0].body.GetPosition().y,this.parts[0].body.GetAngle());
+				theContext.lineTo(cor[0]*10,cor[1]*10);
+			}
+			theContext.closePath();
+			theContext.stroke();
+		}
+		
+	},*/
+	
 	}
 };
 function playerPartDraw() {

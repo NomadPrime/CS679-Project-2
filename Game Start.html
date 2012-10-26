@@ -162,7 +162,7 @@
 		
 		
 		
-		pMatrix = okMat4Proj(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0)
+		pMatrix = okMat4Proj(45, gl.viewportWidth / gl.viewportHeight, 0.1, 1000.0)
 		mvMatrix = okMat4Trans(position.x, position.y, -17.0);
 		gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
         gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
@@ -172,7 +172,7 @@
 		
 		
 		setMatrixUniforms();
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems);
+        gl.drawArrays(gl.TRIANGLE_FAN, 0, squareVertexPositionBuffer.numItems);
 	
 	}
 	function prepareScene(){
@@ -216,7 +216,7 @@
 
 	</head>
 	<body onload="start();">
-		<canvas id="canvas" width="1400" height="800" style="border-color:#999; border-style:solid;"></canvas>
+		<canvas id="canvas" width="1500" height="500" style="border-color:#999; border-style:solid;"></canvas>
 		<p id="debugtext"></p><!--THIS IS A DEBUG ELEMENT, DELETE WHEN DONE!-->
 	</body>
 	<script type="text/javascript" src="Box2dWeb-2.1.a.3.js"></script>

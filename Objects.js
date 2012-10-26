@@ -76,7 +76,7 @@ function webGLDraw2(){
 }
 
 function webGLDraw(){
-	var scale = 5;
+	var scale = 14;
 	var pos=this.body.GetPosition();
 	var theta=this.body.GetAngle();
 	var cor;
