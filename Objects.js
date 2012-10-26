@@ -104,12 +104,14 @@ function makeObject(type, x, y, theta, dims) {	//creates an object with the spec
 	if(type == playerType) {	//player type objects are polygons from an array of vertices
 		//TODO: Make the instantiation code here using a line from pvertices
 		obj.draw = playerPartDraw;
+		obj.indepObject = false;
 		fdef.shape = new b2PolygonShape;
 		fdef.shape.SetAsArray(dims, dims.length);
 	//} else if(type == enemyType) {	//TODO: Enemy type stuff goes here
 		
 	} else if(type == playerShieldType) {	//player character "forcefield"
 		//obj.draw = something	//TODO: draw method for this
+		obj.indepObject = false;
 		fdef.shape = new b2CircleShape(dims);
 	} else if(type == crateType) {
 		obj.draw = drawCrate;

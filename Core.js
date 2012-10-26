@@ -46,30 +46,62 @@ function start() {
     document.addEventListener("mousemove", function(e) {mousex = (e.clientX - theCanvas.offsetLeft) / scale; mousey = (e.clientY - theCanvas.offsetTop) / scale;}, false);
     document.addEventListener("mouseup", function() {mouseDown = false;}, false);
     
+    
+    
+    var grabbed = [];
+    var mousexo = 0;
+    var mouseyo = 0;
+    var mousext = 0;
+    var mouseyt = 0;
+    var aabb = new b2AABB;
+    var ready = false;
+    var grabRadius = 2;
+    var launchMult = 2000;
+    var launchMax = 500;
+    
     function listen() {//account for effects of EventListeners
-    	
+    	if(click) {
+    		mousexo = mousex;
+    		mouseyo = mousey;
+    		aabb.lowerBound = new b2Vec2(mousexo-grabRadius,mouseyo-grabRadius);
+    		aabb.upperBound = new b2Vec2(mousexo+grabRadius,mouseyo+grabRadius);
+    		ready = true;
+    		click = false;
+    	} else if(mouseDown) {
+    		theContext.strokeStyle = "#55FFFF";
+    		theContext.beginPath();
+    		theContext.arc(mousexo*10,mouseyo*10,grabRadius*10,0,Math.PI*2,true);
+    		theContext.stroke();
+    		theContext.moveTo(mousexo*10,mouseyo*10);
+    		theContext.lineTo(mousex*10,mousey*10);
+    		theContext.stroke();
+    	} else if(ready) {
+    		world.QueryAABB(throwScan, aabb);
+    		ready = false;
+    	}
+    }
+    function throwScan(fixture) {
+    	obj = fixture.GetBody().GetUserData();
+    	if(obj.type == crateType && Math.sqrt(Math.pow(obj.body.GetPosition().x-mousexo,2)+Math.pow(obj.body.GetPosition().y-mouseyo,2)) <= grabRadius + 0.5) {
+    		obj.ctrForce(new b2Vec2((mousex-mousexo)*launchMult,(mousey-mouseyo)*launchMult));
+    	}
+    	return true;
     }
 
     
     var collider = new b2ContactListener;
-    collider.BeginContact = function(contact) {
-    	
-    }
-    collider.EndContact = function(contact) {
-    	
-    }
+    collider.BeginContact = function(contact) {}
+    collider.EndContact = function(contact) {}
     collider.PostSolve = function(contact, impulse) {
     	b1 = contact.GetFixtureA().GetBody().GetUserData();
     	b2 = contact.GetFixtureB().GetBody().GetUserData();
     	if(b1.type == playerShieldType) {damage(b1,b2,impulse);}
     	else if(b2.type == playerShieldType) {damage(b2,b1,impulse);}
     }
-    collider.PreSolve = function(contact, oldManifold) {
-    	
-    }
+    collider.PreSolve = function(contact, oldManifold) {}
     this.world.SetContactListener(collider);
     
-    
+    /*
     //TODO: DEMO CODE
     objectList.push(makeObject(crateType, 80, 39, 0, [1,1]));
    	objectList.push(makeObject(crateType, -1000, 30, Math.random(), [1,1]));
@@ -96,12 +128,11 @@ function start() {
     objectList[1].body.SetLinearVelocity(new b2Vec2(400+Math.random()*500,(Math.random()-0.5)*40));
     objectList[1].body.SetAngularVelocity((Math.random()-0.5)*60);
     //TODO: END OF DEMO CODE
-    
+    */
     
     
          
     Player.init();
-    
     
          var debugDraw = new b2DebugDraw();
 			debugDraw.SetSprite(theContext);
@@ -112,7 +143,6 @@ function start() {
 			world.SetDebugDraw(debugDraw);
     function update() {
     	theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
-    	
     	Player.action();
     	world.Step(1/frameRate, 10, 10);	//advance physics engine
     	for(i = 0; i < objectList.length; i++) {
@@ -131,14 +161,14 @@ function start() {
     			purgeFlag = false;
     		}
     	}
-    	world.DrawDebugData();
     	world.ClearForces();
+    	world.DrawDebugData();
+    	listen();
     	for(i = 0; i < objectList.length; i++) {
     		//objectList[i].draw();
     	}
-    	//Player.draw();
+    	Player.draw();
     	//TODO: Click stuff
-    	click = false;
     	runEvents();
     	reqFrame(update);	//set up another iteration
     }
