@@ -22,6 +22,10 @@ var b2ContactListener = Box2D.Dynamics.b2ContactListener;
 var frameRate = 60;	//the FPS of the game
 var mousex = 0;	//x-coordinate of mouse
 var mousey = 0;	//y-coordinate of mouse
+var mousexo = 0;
+var mouseyo = 0;
+var mousext = 0;
+var mouseyt = 0;
 var ddensity = 1000;	//default density
 var dfriction = 0.5;	//default friction
 var drestitution = 0.01;	//default restitution
@@ -33,7 +37,10 @@ var sideBuffer = 50;	//buffer on top/bottom before delete border
 var backBuffer = 50;	//buffer in back before delete border
 var frontBuffer = 400;	//buffer in front before delete border
 //TODO: END OF IMPLEMENT NEEDED STUFF
-var pDamageThreshold = 75;	//number of N of force needed to do damage (damage calculated in N after this point)
+var mouseDown = false;
+var click = false;
+var pDamageThreshold = 75;	//number of kN of force needed to do damage (damage calculated in kN after this point)
+var eDamageThreshold = 50;
 var theCanvas;	//canvas on webpage
 var theContext;	//canvas 2D context
 var world;	//physics engine world

@@ -107,8 +107,13 @@ function makeObject(type, x, y, theta, dims) {	//creates an object with the spec
 		obj.indepObject = false;
 		fdef.shape = new b2PolygonShape;
 		fdef.shape.SetAsArray(dims, dims.length);
-	//} else if(type == enemyType) {	//TODO: Enemy type stuff goes here
-		
+	} else if(type == enemyType) {	//TODO: Enemy type stuff goes here
+		obj.indepObject = false;
+		fdef.shape = new b2PolygonShape;
+		fdef.shape.SetAsArray(dims, dims.length);
+	} else if(type == enemyShieldType) {
+		obj.indepObject = false;
+		fdef.shape = new b2CircleShape(dims);
 	} else if(type == playerShieldType) {	//player character "forcefield"
 		//obj.draw = something	//TODO: draw method for this
 		obj.indepObject = false;
@@ -131,6 +136,13 @@ function damage(b1, b2, impulse) {
 		var hit = Math.sqrt(imp[0]*imp[0]+imp[1]*imp[1])/1000-pDamageThreshold;
 		if(hit > 0) {
 			Player.health -= hit;
+		}
+	}
+	else if(b1.type == enemyShieldType) {	//collisions with player shield
+		var imp = impulse.normalImpulses;
+		var hit = Math.sqrt(imp[0]*imp[0]+imp[1]*imp[1])/1000-pDamageThreshold;
+		if(hit > 0) {
+			b1.data.health -= hit;
 		}
 	}
 }

@@ -41,7 +41,6 @@ function start() {
     }, false);
     window.addEventListener("keyup", function (e) { delete keysDown[e.keyCode]; }, false);
     
-    var mouseDown, click;
     document.addEventListener("mousedown", function(e) {click = true; mouseDown = true;}, false);
     document.addEventListener("mousemove", function(e) {mousex = (e.clientX - theCanvas.offsetLeft) / scale; mousey = (e.clientY - theCanvas.offsetTop) / scale;}, false);
     document.addEventListener("mouseup", function() {mouseDown = false;}, false);
@@ -49,15 +48,11 @@ function start() {
     
     
     var grabbed = [];
-    var mousexo = 0;
-    var mouseyo = 0;
-    var mousext = 0;
-    var mouseyt = 0;
     var aabb = new b2AABB;
     var ready = false;
     var grabRadius = 2;
     var launchMult = 2000;
-    var launchMax = 500;
+    var launchMax = 50000;
     
     function listen() {//account for effects of EventListeners
     	if(click) {
@@ -68,13 +63,24 @@ function start() {
     		ready = true;
     		click = false;
     	} else if(mouseDown) {
+    		max = launchMax/launchMult;
+    		mag = Math.sqrt(Math.pow(mousex-mousexo,2)+Math.pow(mousey-mouseyo,2));
+    		if(mag <= max) {
+    			mousext = mousex;
+    			mouseyt = mousey;
+    		} else {
+    			mousext = mousexo + (mousex - mousexo) * max / mag;
+    			mouseyt = mouseyo + (mousey - mouseyo) * max / mag;
+    		}
     		theContext.strokeStyle = "#55FFFF";
+    		theContext.lineWidth = 4;
     		theContext.beginPath();
     		theContext.arc(mousexo*10,mouseyo*10,grabRadius*10,0,Math.PI*2,true);
     		theContext.stroke();
     		theContext.moveTo(mousexo*10,mouseyo*10);
-    		theContext.lineTo(mousex*10,mousey*10);
+    		theContext.lineTo(mousext*10,mouseyt*10);
     		theContext.stroke();
+    		theContext.lineWidth = 1;
     	} else if(ready) {
     		world.QueryAABB(throwScan, aabb);
     		ready = false;
@@ -82,8 +88,8 @@ function start() {
     }
     function throwScan(fixture) {
     	obj = fixture.GetBody().GetUserData();
-    	if(obj.type == crateType && Math.sqrt(Math.pow(obj.body.GetPosition().x-mousexo,2)+Math.pow(obj.body.GetPosition().y-mouseyo,2)) <= grabRadius + 0.5) {
-    		obj.ctrForce(new b2Vec2((mousex-mousexo)*launchMult,(mousey-mouseyo)*launchMult));
+    	if(obj.indepObject && Math.sqrt(Math.pow(obj.body.GetPosition().x-mousexo,2)+Math.pow(obj.body.GetPosition().y-mouseyo,2)) <= grabRadius + 0.5) {
+    		obj.ctrForce(new b2Vec2((mousext-mousexo)*launchMult,(mouseyt-mouseyo)*launchMult));
     	}
     	return true;
     }
@@ -97,6 +103,8 @@ function start() {
     	b2 = contact.GetFixtureB().GetBody().GetUserData();
     	if(b1.type == playerShieldType) {damage(b1,b2,impulse);}
     	else if(b2.type == playerShieldType) {damage(b2,b1,impulse);}
+    	else if(b1.type == enemyShieldType) {damage(b1,b2,impulse);}
+    	else if(b2.type == enemyShieldType) {damage(b2,b1,impulse);}
     }
     collider.PreSolve = function(contact, oldManifold) {}
     this.world.SetContactListener(collider);
@@ -133,6 +141,7 @@ function start() {
     
          
     Player.init();
+    spawn();
     
          var debugDraw = new b2DebugDraw();
 			debugDraw.SetSprite(theContext);
@@ -144,12 +153,19 @@ function start() {
     function update() {
     	theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
     	Player.action();
-    	world.Step(1/frameRate, 10, 10);	//advance physics engine
     	for(i = 0; i < objectList.length; i++) {
     		objectList[i].action();
     		if(purgeFlag) {
     			objectList.sort(cull);
     			objectList.pop();
+    			purgeFlag = false;
+    		}
+    	}
+    	for(i = 0; i < enemyList.length; i++) {
+    		enemyList[i].action();
+    		if(purgeFlag) {
+    			enemyList.sort(cull);
+    			enemyList.pop();
     			purgeFlag = false;
     		}
     	}
@@ -161,11 +177,19 @@ function start() {
     			purgeFlag = false;
     		}
     	}
+    	if(!mouseDown) {
+    		world.Step(1/frameRate, 10, 10);	//advance physics engine
+    	} else {
+    		world.Step(1/(frameRate * 4), 10, 10);	//BULLET TIME YAY
+    	}
     	world.ClearForces();
     	world.DrawDebugData();
     	listen();
     	for(i = 0; i < objectList.length; i++) {
     		//objectList[i].draw();
+    	}
+    	for(i = 0; i < enemyList.length; i++) {
+    		enemyList[i].draw();
     	}
     	Player.draw();
     	//TODO: Click stuff

@@ -67,6 +67,7 @@ var Player = {
         if (this.alive) {
         	this.shield.body.ApplyTorque((-this.shield.body.GetAngle()*20-this.shield.body.GetAngularVelocity())*100000);	//corrects angle
         	pos = this.shield.body.GetPosition();
+			theta = this.parts[0].body.GetAngle();
         	if (pos.y < 5) {	//Up correction
         		this.shield.ctrForce(new b2Vec2(this.thrustMod*(5-pos.y)*-Math.sin(theta),this.thrustMod*(5-pos.y)*Math.cos(theta)));
         		if(pos.y < 0) {this.shield.body.SetLinearVelocity(new b2Vec2(this.shield.body.GetLinearVelocity().x,5));}
@@ -83,7 +84,6 @@ var Player = {
 				this.shield.ctrForce(new b2Vec2(this.thrustMod*(5-pos.x)*Math.cos(theta),this.thrustMod*(5-pos.x)*Math.sin(theta)));
         		if(pos.x < 0) {this.shield.body.SetLinearVelocity(new b2Vec2(5,this.shield.body.GetLinearVelocity().y));}
     	    }
-			theta = this.parts[0].body.GetAngle();
 			if (38 in keysDown || 87 in keysDown) {	//Up
 				this.shield.ctrForce(new b2Vec2(-this.thrustMod*-Math.sin(theta),-this.thrustMod*Math.cos(theta)));
 			}
@@ -103,9 +103,38 @@ var Player = {
 	},
 	
 	draw : function() {	//draws the player character
+		if(this.alive) {
+			pos = this.shield.body.GetPosition();
+    		//mag = Math.sqrt(Math.pow(mousexo-pos.x,2)+Math.pow(mouseyo-pos.y,2));
+			if(mouseDown) {
+    			head = Math.atan2(mouseyo-pos.y,mousexo-pos.x);
+    			
+				theContext.strokeStyle = "#55FFFF"
+				theContext.beginPath();
+				//theContext.moveTo((pos.x + (mousexo - pos.x) * this.size * 0.65 / mag) * scale, (pos.y + (mouseyo - pos.y) * this.size * 0.65 / mag) * scale);
+				theContext.moveTo((pos.x+Math.cos(head)*this.size*0.65)*scale,(pos.y+Math.sin(head)*this.size*0.65)*scale);
+				theContext.lineTo(mousexo * scale, mouseyo * scale);
+				theContext.stroke();
+			} else {head = Math.atan2(mousey-pos.y,mousex-pos.x);}
+			theContext.strokeStyle = "#555555";
+			theContext.fillStyle = "#555555";
+			theContext.beginPath();
+			theContext.moveTo((pos.x+Math.cos(head-Math.PI/30)*this.size*0.7)*scale,(pos.y+Math.sin(head-Math.PI/30)*this.size*0.7)*scale);
+			theContext.lineTo((pos.x+Math.cos(head+Math.PI/30)*this.size*0.7)*scale,(pos.y+Math.sin(head+Math.PI/30)*this.size*0.7)*scale);
+			theContext.lineTo((pos.x+Math.cos(head+Math.PI/20)*this.size*0.5)*scale,(pos.y+Math.sin(head+Math.PI/20)*this.size*0.5)*scale);
+			theContext.lineTo((pos.x+Math.cos(head-Math.PI/20)*this.size*0.5)*scale,(pos.y+Math.sin(head-Math.PI/20)*this.size*0.5)*scale);
+			theContext.closePath();
+			theContext.stroke();
+			theContext.fill();
+		}
+		if(this.alive){
 		var cor;
-		theContext.strokeStyle = "#000000";
+		theContext.strokeStyle = "#333333";
+		theContext.fillStyle = "#555555";
 		for(i = 0; i < pvers.length; i++){
+			if(i == 7) {
+				theContext.fillStyle = "#5555FF";
+			}
 			theContext.beginPath();
 			cor = coordTrans(pvers[i][0].x,pvers[i][0].y,this.parts[0].body.GetPosition().x,this.parts[0].body.GetPosition().y,this.parts[0].body.GetAngle());
 			theContext.moveTo(cor[0]*scale,cor[1]*scale);
@@ -115,8 +144,9 @@ var Player = {
 			}
 			theContext.closePath();
 			theContext.stroke();
+			theContext.fill();
 		}
-		
+		}
 	},
 	
 	die : function() {	//activates on player death
@@ -137,6 +167,7 @@ var Player = {
 			temp.Add(pvers[i][3]);
 			temp.Multiply((Math.random())*this.parts[i].body.GetMass());
 			this.parts[i].ctrForce(temp);
+			this.parts[i].indepObject = true;
 		}
 	}
 };
