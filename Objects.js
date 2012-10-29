@@ -140,7 +140,7 @@ function damage(b1, b2, impulse) {
 	}
 	else if(b1.type == enemyShieldType) {	//collisions with player shield
 		var imp = impulse.normalImpulses;
-		var hit = Math.sqrt(imp[0]*imp[0]+imp[1]*imp[1])/1000-pDamageThreshold;
+		var hit = Math.sqrt(imp[0]*imp[0]+imp[1]*imp[1])/1000-eDamageThreshold;
 		if(hit > 0) {
 			b1.data.health -= hit;
 		}

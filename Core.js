@@ -47,12 +47,7 @@ function start() {
     
     
     
-    var grabbed = [];
-    var aabb = new b2AABB;
-    var ready = false;
-    var grabRadius = 2;
-    var launchMult = 2000;
-    var launchMax = 50000;
+    
     
     function listen() {//account for effects of EventListeners
     	if(click) {

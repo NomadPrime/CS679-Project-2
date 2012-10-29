@@ -30,7 +30,12 @@ var ddensity = 1000;	//default density
 var dfriction = 0.5;	//default friction
 var drestitution = 0.01;	//default restitution
 var worldSpeed = -10;	//speed of "static" objects in the world
-var purgeFlag = false;	//flags for a purge routine
+var purgeFlag = false;	//flags for a purge routinevar grabbed = [];
+var aabb = new b2AABB;
+var ready = false;
+var grabRadius = 3;
+var launchMult = 2000;
+var launchMax = 50000;
 //TODO: IMPLEMENT THIS SHIT
 var scale = 10;	//scale between drawing and physics engine
 var sideBuffer = 50;	//buffer on top/bottom before delete border
