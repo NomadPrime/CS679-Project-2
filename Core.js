@@ -9,8 +9,9 @@ function start() {
         function (/* function FrameRequestCallback */callback, /* DOMElement Element */element) {
             window.setTimeout(callback, 1000 / frameRate);
         };
-    theCanvas = document.getElementById("canvas");
-    theContext = theCanvas.getContext("2d");
+    //theCanvas = document.getElementById("canvas");
+    //theContext = theCanvas.getContext("2d");
+    startGL();
     
     //world created with 0 gravity, and sleep is disabled
     world = new b2World(new b2Vec2(0,0),false);
@@ -41,9 +42,9 @@ function start() {
     }, false);
     window.addEventListener("keyup", function (e) { delete keysDown[e.keyCode]; }, false);
     
-    document.addEventListener("mousedown", function(e) {click = true; mouseDown = true;}, false);
-    document.addEventListener("mousemove", function(e) {mousex = (e.clientX - theCanvas.offsetLeft) / scale; mousey = (e.clientY - theCanvas.offsetTop) / scale;}, false);
-    document.addEventListener("mouseup", function() {mouseDown = false;}, false);
+    //document.addEventListener("mousedown", function(e) {click = true; mouseDown = true;}, false);
+   // document.addEventListener("mousemove", function(e) {mousex = (e.clientX - theCanvas.offsetLeft) / scale; mousey = (e.clientY - theCanvas.offsetTop) / scale;}, false);
+    //document.addEventListener("mouseup", function() {mouseDown = false;}, false);
     
     
     
@@ -67,7 +68,7 @@ function start() {
     			mousext = mousexo + (mousex - mousexo) * max / mag;
     			mouseyt = mouseyo + (mousey - mouseyo) * max / mag;
     		}
-    		theContext.strokeStyle = "#55FFFF";
+    		/*theContext.strokeStyle = "#55FFFF";
     		theContext.lineWidth = 4;
     		theContext.beginPath();
     		theContext.arc(mousexo*10,mouseyo*10,grabRadius*10,0,Math.PI*2,true);
@@ -75,7 +76,7 @@ function start() {
     		theContext.moveTo(mousexo*10,mouseyo*10);
     		theContext.lineTo(mousext*10,mouseyt*10);
     		theContext.stroke();
-    		theContext.lineWidth = 1;
+    		theContext.lineWidth = 1;*/
     	} else if(ready) {
     		world.QueryAABB(throwScan, aabb);
     		ready = false;
@@ -138,15 +139,15 @@ function start() {
     Player.init();
     spawn();
     
-         var debugDraw = new b2DebugDraw();
+         /*var debugDraw = new b2DebugDraw();
 			debugDraw.SetSprite(theContext);
 			debugDraw.SetDrawScale(scale);
 			debugDraw.SetFillAlpha(10);
 			debugDraw.SetLineThickness(1.0);
-			debugDraw.SetFlags(b2DebugDraw.e_shapeBit/* | b2DebugDraw.e_jointBit*/);
-			world.SetDebugDraw(debugDraw);
+			//debugDraw.SetFlags(b2DebugDraw.e_shapeBit/* | b2DebugDraw.e_jointBit*///);
+			//world.SetDebugDraw(debugDraw);
     function update() {
-    	theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
+    	//theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
     	Player.action();
     	for(i = 0; i < objectList.length; i++) {
     		objectList[i].action();
@@ -178,17 +179,18 @@ function start() {
     		world.Step(1/(frameRate * 4), 10, 10);	//BULLET TIME YAY
     	}
     	world.ClearForces();
-    	world.DrawDebugData();
+    	//world.DrawDebugData();
     	listen();
     	for(i = 0; i < objectList.length; i++) {
     		//objectList[i].draw();
     	}
     	for(i = 0; i < enemyList.length; i++) {
-    		enemyList[i].draw();
+    		//enemyList[i].draw();
     	}
-    	Player.draw();
+    	//Player.draw();
     	//TODO: Click stuff
     	runEvents();
+    	displayGL();
     	reqFrame(update);	//set up another iteration
     }
     update();

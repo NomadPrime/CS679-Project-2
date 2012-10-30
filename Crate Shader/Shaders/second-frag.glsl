@@ -34,9 +34,9 @@ void main(void) {
 	float shade = (-1.0+outer-inner+core);	//shadow on slopes
 	
 	gl_FragColor = vec4(
-	0.6+lights*0.5+shade*0.2,
-	0.6+lights*0.5+shade*0.2,
-	0.6+lights*0.5+shade*0.2,
+	0.8+lights*0.3+shade*0.2,
+	0.8+lights*0.3+shade*0.2,
+	0.8+lights*0.3+shade*0.2,
 	1.0);
 
 }

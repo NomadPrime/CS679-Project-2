@@ -16,8 +16,8 @@ void main(void) {
 	ipos = squareInfo.xy;
 	sintime = (sin(time)+1.0)/2.0;
 	outerslope = 0.8;
-	innerslope = 0.5;
-	coreedge = 0.3;
+	innerslope = 0.6;
+	coreedge = 0.5;
 	theta = time/2.0;
 	phi = -PI/4.0;
 	vec2 newpos = ipos;

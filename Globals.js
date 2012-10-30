@@ -61,3 +61,8 @@ var objectList = [];	//list of free objects
 var enemyList = [];		//list of enemies
 var stuffList = [];		//list of misc stuff
 var keysDown = {};	//holds all keys currently pressed
+var container = null;	//holds the container
+var rengl = null;	//holds three.js webGL renderer
+var scene = null;	//holds three.js scene
+var camera = null;	//holds camera
+var shape;
