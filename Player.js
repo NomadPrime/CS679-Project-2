@@ -114,6 +114,40 @@ var Player = {
 		*/
 	},
 	
+	
+	drawShield : function() {
+		var scale = 2;
+		var pos = this.parts[0].body.GetPosition();
+		var cor;
+		var dims = [2,2];
+		
+		var myVertices = [];
+	
+		
+		myVertices.push(pos.x - 1.0);
+		myVertices.push(pos.y + 1.0);
+		myVertices.push(0/scale);
+		
+		
+		myVertices.push(pos.x + 1.0);
+		myVertices.push(pos.y + 1.0);
+		myVertices.push(0/scale);
+		
+		
+		myVertices.push(pos.x + 1.0);
+		myVertices.push(pos.y - 1.0);
+		myVertices.push(0/scale);
+		
+		
+		myVertices.push(pos.x - 1.0);
+		myVertices.push(pos.y - 1.0);
+		myVertices.push(0/scale);
+		
+		
+		addSquare2(pos, myVertices);
+		
+	},
+	
 	action : function() {
         if (this.health <= 0 && this.alive) {this.die();}
         if (this.alive) {

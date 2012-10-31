@@ -142,7 +142,8 @@ function start() {
     		objectList[i].draw();
     	}
 		
-    	Player.draw();
+    	//Player.draw();
+		Player.drawShield();
     	
     	
     	runEvents();
