@@ -3,7 +3,7 @@
 		<title>Debris Blaster [working title]</title>
 		
 		<script type="text/javascript" src="Oak3D_v_0_5.js"></script>
-<script id="shader-fs" type="x-shader/x-fragment">
+<script id="shader-fs2" type="x-shader/x-fragment">
 
     precision mediump float;
 
@@ -14,14 +14,48 @@
     }
 </script>
 
-<script id="shader-fs2" type="x-shader/x-fragment">
+<script id="shader-fs" type="x-shader/x-fragment">
 
     precision mediump float;
 
+	varying vec2 ipos;
+	varying float outerslope;
+	varying float innerslope;
+	varying float coreedge;
     varying lowp vec4 vColor;
     void main(void) {
-        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-	   	//gl_FragColor = vColor;
+	
+	
+		float PI = 3.14159265358979323846264;
+		float theta = 0.0;
+		float phi = PI;
+		
+		float r = sqrt(ipos.x*ipos.x + ipos.y*ipos.y);
+		
+		float outer = smoothstep(outerslope+.01,outerslope-.01,abs(ipos.x)) * smoothstep(outerslope+.01,outerslope-.01,abs(ipos.y));
+		float inner = smoothstep(innerslope+.01,innerslope-.01,abs(ipos.x)) * smoothstep(innerslope+.01,innerslope-.01,abs(ipos.y));
+		float core = smoothstep(coreedge+.01,coreedge-.01,abs(ipos.x)) * smoothstep(coreedge +.01, coreedge-.01,abs(ipos.y));
+	
+		float tritop = smoothstep(-0.01,0.01,ipos.x+ipos.y) * smoothstep(0.01,-0.01,ipos.x-ipos.y);
+		float trilef = smoothstep(0.01,-0.01,ipos.x+ipos.y) * smoothstep(0.01,-0.01,ipos.x-ipos.y);
+		float trirgt = smoothstep(-0.01,0.01,ipos.x+ipos.y) * smoothstep(-0.01,0.01,ipos.x-ipos.y);
+		float tribtm = smoothstep(0.01,-0.01,ipos.x+ipos.y) * smoothstep(-0.01,0.01,ipos.x-ipos.y);
+		
+		float topil = sin(phi)*sin(theta)+cos(phi)*cos(theta);
+		float lefil = sin(phi)*sin(theta+PI/2.0)+cos(phi)*cos(theta+PI/2.0);
+		float rgtil = sin(phi)*sin(theta-PI/2.0)+cos(phi)*cos(theta-PI/2.0);
+		float btmil = sin(phi)*sin(theta+PI)+cos(phi)*cos(theta+PI);
+	
+		float lights = (1.0-outer-inner+core)*(topil*tritop+lefil*trilef+rgtil*trirgt+btmil*tribtm);	//illumination/shadow on slopes
+		float shade = (-1.0+outer-inner+core);	//shadow on slopes
+	
+		
+		
+       gl_FragColor = vec4(
+	0.8+lights*0.3+shade*0.2,
+	0.8+lights*0.3+shade*0.2,
+	0.8+lights*0.3+shade*0.2,
+	1.0);
     }
 </script>
 
@@ -34,8 +68,17 @@
     uniform mat4 uPMatrix;
 	
 	varying lowp vec4 vColor;
+	varying float outerslope;
+	varying float innerslope;
+	varying float coreedge;
+	varying vec2 ipos;
+	
 
     void main(void) {
+		ipos = aVertexPosition.xy;
+		outerslope = 0.8;
+		innerslope = 0.6;
+		coreedge = 0.5;
         gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
 		vColor = aVertexColor;
     }
