@@ -100,7 +100,7 @@ var Player = {
 			//pos.y = -this.parts[0].body.GetPosition().y * 5;
 			pos.x = 0;
 			pos.y = 0;
-			addSquare(pos, myVertices);
+			addSquare2(pos, myVertices);
 		}
 		/*	
 		var myVertices = [ -dims[0]/2/scale, dims[1]/2/scale, 0, //left-top

@@ -141,6 +141,7 @@ function start() {
     	for(i = 0; i < objectList.length; i++) {
     		objectList[i].draw();
     	}
+		
     	Player.draw();
     	
     	
