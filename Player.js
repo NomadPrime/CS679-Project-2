@@ -52,9 +52,9 @@ var Player = {
 				pvers[i][j].Multiply(this.size);
 			}
 		}
-		this.shield = makeObject(playerShieldType, 20, 40, 0, this.size * 0.65);
+		this.shield = makeObject(playerShieldType, 0, 0, 0, this.size * 0.7);
 		for(i = 0; i < pvers.length; i++) {
-			this.parts.push(makeObject(playerType, 20, 40, 0, pvers[i]));
+			this.parts.push(makeObject(playerType, 0, 0, 0, pvers[i]));
 			objectList.push(this.parts[i]);
 			jdef.Initialize(this.shield.body, this.parts[i].body, this.shield.body.GetWorldCenter());
 			jdef.collideConnected = false;
@@ -63,31 +63,46 @@ var Player = {
 	},
 	
 	action : function() {
+		
+		
+		
         if (this.health <= 0 && this.alive) {this.die();}
         if (this.alive) {
         	this.shield.body.ApplyTorque((-this.shield.body.GetAngle()*20-this.shield.body.GetAngularVelocity())*100000);	//corrects angle
-        	pos = this.shield.body.GetPosition();
-			theta = this.parts[0].body.GetAngle();
-        	if (pos.y < 5) {	//Up correction
-        		this.shield.ctrForce(new b2Vec2(this.thrustMod*(5-pos.y)*-Math.sin(theta),this.thrustMod*(5-pos.y)*Math.cos(theta)));
-        		if(pos.y < 0) {this.shield.body.SetLinearVelocity(new b2Vec2(this.shield.body.GetLinearVelocity().x,5));}
+        	var pos = this.shield.body.GetPosition();
+			var theta = this.parts[0].body.GetAngle();
+			var ybounds = container.offsetHeight / (2 * scale);
+			var xbounds = container.offsetWidth / (2 * scale);
+			var ybuffer = ybounds - 2;
+			var xbuffer = xbounds - 2;
+			this.shield.mesh.position.x = this.shield.body.GetPosition().x;
+			this.shield.mesh.position.y = this.shield.body.GetPosition().y;
+			this.shield.shader.uniforms.strength.value = this.shield.timer / 30.0;
+			if(this.shield.timer > 0) {
+				this.shield.timer--;
+			}
+			
+			
+        	if (pos.y < -ybuffer) {	//Up correction
+        		this.shield.ctrForce(new b2Vec2(this.thrustMod*(-ybuffer-pos.y)*-Math.sin(theta),this.thrustMod*(-ybuffer-pos.y)*Math.cos(theta)));
+        		if(pos.y < -ybounds) {this.shield.body.SetLinearVelocity(new b2Vec2(this.shield.body.GetLinearVelocity().x,5));}
         	}
-        	if (pos.y > 45) {	//Down correction
-				this.shield.ctrForce(new b2Vec2(-this.thrustMod*(pos.y-45)*-Math.sin(theta),-this.thrustMod*(pos.y-45)*Math.cos(theta)));
-        		if(pos.y > 50) {this.shield.body.SetLinearVelocity(new b2Vec2(this.shield.body.GetLinearVelocity().x,-5));}
+        	if (pos.y > ybuffer) {	//Down correction
+				this.shield.ctrForce(new b2Vec2(-this.thrustMod*(pos.y-ybuffer)*-Math.sin(theta),-this.thrustMod*(pos.y-ybuffer)*Math.cos(theta)));
+        		if(pos.y > ybounds) {this.shield.body.SetLinearVelocity(new b2Vec2(this.shield.body.GetLinearVelocity().x,-5));}
     	    }
-    	    if (pos.x > 145) {	//Left correction
-				this.shield.ctrForce(new b2Vec2(-this.thrustMod*(pos.x-145)*Math.cos(theta),-this.thrustMod*(pos.x-145)*Math.sin(theta)));
-        		if(pos.x > 150) {this.shield.body.SetLinearVelocity(new b2Vec2(-5,this.shield.body.GetLinearVelocity().y));}
+    	    if (pos.x > xbuffer) {	//Left correction
+				this.shield.ctrForce(new b2Vec2(-this.thrustMod*(pos.x-xbuffer)*Math.cos(theta),-this.thrustMod*(pos.x-xbuffer)*Math.sin(theta)));
+        		if(pos.x > xbounds) {this.shield.body.SetLinearVelocity(new b2Vec2(-5,this.shield.body.GetLinearVelocity().y));}
     	    }
-    	    if (pos.x < 5) {	//Right correction
-				this.shield.ctrForce(new b2Vec2(this.thrustMod*(5-pos.x)*Math.cos(theta),this.thrustMod*(5-pos.x)*Math.sin(theta)));
-        		if(pos.x < 0) {this.shield.body.SetLinearVelocity(new b2Vec2(5,this.shield.body.GetLinearVelocity().y));}
+    	    if (pos.x < -xbuffer) {	//Right correction
+				this.shield.ctrForce(new b2Vec2(this.thrustMod*(-xbuffer-pos.x)*Math.cos(theta),this.thrustMod*(-xbuffer-pos.x)*Math.sin(theta)));
+        		if(pos.x < -xbounds) {this.shield.body.SetLinearVelocity(new b2Vec2(5,this.shield.body.GetLinearVelocity().y));}
     	    }
-			if (38 in keysDown || 87 in keysDown) {	//Up
+			if (40 in keysDown || 83 in keysDown) {	//Up
 				this.shield.ctrForce(new b2Vec2(-this.thrustMod*-Math.sin(theta),-this.thrustMod*Math.cos(theta)));
 			}
-	        if (40 in keysDown || 83 in keysDown) {	//Down
+	        if (38 in keysDown || 87 in keysDown) {	//Down
 				this.shield.ctrForce(new b2Vec2(this.thrustMod*-Math.sin(theta),this.thrustMod*Math.cos(theta)));
 	        }
 	        if (37 in keysDown || 65 in keysDown) {	//Left
@@ -104,7 +119,7 @@ var Player = {
 	
 	draw : function() {	//draws the player character
 		if(this.alive) {
-			pos = this.shield.body.GetPosition();
+			var pos = this.shield.body.GetPosition();
     		//mag = Math.sqrt(Math.pow(mousexo-pos.x,2)+Math.pow(mouseyo-pos.y,2));
 			if(mouseDown) {
     			head = Math.atan2(mouseyo-pos.y,mousexo-pos.x);
@@ -157,6 +172,7 @@ var Player = {
 		}*/
 		//this.shield.body.DestroyFixture(this.shield.fixture);
 		world.DestroyBody(this.shield.body);
+		scene.remove(this.shield.mesh);
 		var temp;
 		this.shield = null;
 		this.alive = false;

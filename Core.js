@@ -12,6 +12,7 @@ function start() {
     //theCanvas = document.getElementById("canvas");
     //theContext = theCanvas.getContext("2d");
     startGL();
+    loadShaders();
     
     //world created with 0 gravity, and sleep is disabled
     world = new b2World(new b2Vec2(0,0),false);
@@ -42,9 +43,9 @@ function start() {
     }, false);
     window.addEventListener("keyup", function (e) { delete keysDown[e.keyCode]; }, false);
     
-    //document.addEventListener("mousedown", function(e) {click = true; mouseDown = true;}, false);
-   // document.addEventListener("mousemove", function(e) {mousex = (e.clientX - theCanvas.offsetLeft) / scale; mousey = (e.clientY - theCanvas.offsetTop) / scale;}, false);
-    //document.addEventListener("mouseup", function() {mouseDown = false;}, false);
+    document.addEventListener("mousedown", function(e) {click = true; mouseDown = true;}, false);
+    document.addEventListener("mousemove", function(e) {mousex = (e.clientX - container.offsetLeft - container.offsetWidth/2) / scale; mousey = -(e.clientY - container.offsetTop - container.offsetHeight/2) / scale;}, false);
+    document.addEventListener("mouseup", function() {mouseDown = false;}, false);
     
     
     
@@ -105,9 +106,9 @@ function start() {
     collider.PreSolve = function(contact, oldManifold) {}
     this.world.SetContactListener(collider);
     
-    /*
+    
     //TODO: DEMO CODE
-    objectList.push(makeObject(crateType, 80, 39, 0, [1,1]));
+   /* objectList.push(makeObject(crateType, 80, 39, 0, [1,1]));
    	objectList.push(makeObject(crateType, -1000, 30, Math.random(), [1,1]));
    	objectList.push(makeObject(crateType, 80, 40, 0, [1,1]));
    	objectList.push(makeObject(crateType, 80, 41, 0, [1,1]));
@@ -124,20 +125,15 @@ function start() {
     for(i = 0; i < 40; i++) {
     }
     crateStack(160, 40, 0, -5000, 0, 0, 1, 1, 2, 2, 50, 50, 0);
-    crateStack(0, 40, 0, 0, 0, 0, 1, 1, 2, 2, 50, 50, 0);
-   	//objectList[1].effect = railDriverEffect;
-   	objectList[1].data = new b2Vec2(100,0);
-   	//objectList[0].effect = stasisEffect;
-   	//objectList[0].timer = 60;
-    objectList[1].body.SetLinearVelocity(new b2Vec2(400+Math.random()*500,(Math.random()-0.5)*40));
-    objectList[1].body.SetAngularVelocity((Math.random()-0.5)*60);
+    crateStack(0, 40, 0, 0, 0, 0, 1, 1, 2, 2, 50, 50, 0);*/
+    //objectList[1].body.SetLinearVelocity(new b2Vec2(400+Math.random()*500,(Math.random()-0.5)*40));
+    //objectList[1].body.SetAngularVelocity((Math.random()-0.5)*60);
     //TODO: END OF DEMO CODE
-    */
+    
     
     
          
     Player.init();
-    spawn();
     
          /*var debugDraw = new b2DebugDraw();
 			debugDraw.SetSprite(theContext);
@@ -190,7 +186,15 @@ function start() {
     	//Player.draw();
     	//TODO: Click stuff
     	runEvents();
-    	displayGL();
+    	
+    	
+    	/*
+    	shape.rotation.z += .05;
+    	shape.position.x = mousex;
+    	shape.position.y = mousey;*/
+    	rengl.render(scene, camera);
+    	
+    	
     	reqFrame(update);	//set up another iteration
     }
     update();

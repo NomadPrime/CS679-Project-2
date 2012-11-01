@@ -52,10 +52,10 @@ var world;	//physics engine world
 var bdef;// = new b2BodyDef;
 var fdef;// = new b2FixtureDef;
 var jdef;// = new b2WeldJointDef;
-var lowxBound = -10;	//low x-axis boundary
+var lowxBound = -100;	//low x-axis boundary
 var highxBound = 500;	//high x-axis boundary
-var lowyBound = -20;	//low y-axis boundary
-var highyBound = 70;	//high y-axis boundary
+var lowyBound = -100;	//low y-axis boundary
+var highyBound = 100;	//high y-axis boundary
 
 var objectList = [];	//list of free objects
 var enemyList = [];		//list of enemies
@@ -66,3 +66,9 @@ var rengl = null;	//holds three.js webGL renderer
 var scene = null;	//holds three.js scene
 var camera = null;	//holds camera
 var shape;
+
+var vShieldShader;
+var fShieldShader;
+var vCrateShader;
+var fCrateShader;
+

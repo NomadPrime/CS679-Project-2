@@ -11,12 +11,16 @@ var anObject = {
 	"timer" : 0,	//used for effect cooldowns
 	"body" : null,	//b2Body of object in physics engine
 	"fixture" : null,	//b2Fixture attached to body(used for removal)
+	"mesh" : null,	//three.js mesh
+	"shader" : null,	//three.js shader
+	"uniforms" : null,	//three.js shader uniforms
 	"indepObject" : true,	//true unless object is part of a larger entity (player, enemy)
 	"remove" : false,	//used to flag object for removal from lists
 	
 	draw : function() {},	//replaced by draw command of each object type
 	
 	action : function() {	//updates object based on effects acting on it and global effects acting on everything.
+		/*
 		if(this.effect !== 0) {	//skips everything if no effect
 			if(this.effect == railDriverEffect) {	//continuously applies force using the given vector
 				this.ctrForce(this.data);
@@ -28,10 +32,16 @@ var anObject = {
 				} else {this.effect = 0;}	//stasis effect dissipates after a certain amount of time
 			}
 			//place additional effects here that interact only with this body
-		}
+		}*/
 		//global effects will go outside first if statement
 		
-		pos = this.body.GetPosition();
+		var pos = this.body.GetPosition();
+		if(this.type == crateType || this.type == playerType || this.type == enemyType) {
+			//this.mesh.position.set(pos.x, pos.y, 90);
+		this.mesh.position.x = pos.x;
+		this.mesh.position.y = pos.y;
+		this.mesh.rotation.z = this.body.GetAngle();
+		}
 		if((pos.x < lowxBound || pos.x > highxBound || pos.y < lowyBound || pos.y > highyBound) && this.indepObject == true || this.remove) {this.purge();}
 	},
 	
@@ -39,6 +49,7 @@ var anObject = {
 		this.remove = true;
 		this.body.DestroyFixture(this.fixture);
 		world.DestroyBody(this.body);
+		scene.remove(this.mesh);
 		purgeFlag = true;
 	},
 	
@@ -107,21 +118,100 @@ function makeObject(type, x, y, theta, dims) {	//creates an object with the spec
 		obj.indepObject = false;
 		fdef.shape = new b2PolygonShape;
 		fdef.shape.SetAsArray(dims, dims.length);
+		
+		
+		var geometry = new THREE.Geometry();
+		
+		geometry.vertices.push(new THREE.Vector3(dims[0].x,dims[0].y,97));
+		geometry.vertices.push(new THREE.Vector3(dims[1].x,dims[1].y,97));
+		geometry.vertices.push(new THREE.Vector3(dims[2].x,dims[2].y,97));
+		geometry.vertices.push(new THREE.Vector3(dims[3].x,dims[3].y,97));
+		geometry.faces.push(new THREE.Face4(0,1,2,3));
+		obj.mesh = new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({color: 0x555555}));
+		scene.add(obj.mesh);
+		obj.mesh.position.x = x;
+		obj.mesh.position.y = y;
+		
 	} else if(type == enemyType) {	//TODO: Enemy type stuff goes here
 		obj.indepObject = false;
 		fdef.shape = new b2PolygonShape;
 		fdef.shape.SetAsArray(dims, dims.length);
+		
+		
+		var geometry = new THREE.Geometry();
+		
+		geometry.vertices.push(new THREE.Vector3(dims[0].x,dims[0].y,97));
+		geometry.vertices.push(new THREE.Vector3(dims[1].x,dims[1].y,97));
+		geometry.vertices.push(new THREE.Vector3(dims[2].x,dims[2].y,97));
+		geometry.vertices.push(new THREE.Vector3(dims[3].x,dims[3].y,97));
+		geometry.faces.push(new THREE.Face4(0,1,2,3));
+		obj.mesh = new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({color: 0xFF0000}));
+		scene.add(obj.mesh);
+		obj.mesh.position.x = x;
+		obj.mesh.position.y = y;
+		
+		
 	} else if(type == enemyShieldType) {
 		obj.indepObject = false;
 		fdef.shape = new b2CircleShape(dims);
+		var geometry = new THREE.Geometry();
+		geometry.vertices.push(new THREE.Vector3(0,0,99));
+		geometry.vertices.push(new THREE.Vector3(dims,0,99));
+		for(i = 1; i < 200; i++){
+			geometry.vertices.push(new THREE.Vector3(dims*Math.cos(i*Math.PI/100),dims*Math.sin(i*Math.PI/100),0,99));
+			geometry.faces.push(new THREE.Face3(0,i,i+1));
+		}
+		geometry.faces.push(new THREE.Face3(0,200,1));
+		obj.shader = new THREE.ShaderMaterial({
+			uniforms: {'strength' : {'type' : 'f', 'value' : 0.5+obj.timer/60.0},'radius' : {'type' : 'f', 'value' : dims}},
+			attributes: {},
+			vertexShader: vShieldShader,
+			fragmentShader: fShieldShader
+		});
+		obj.mesh = new THREE.Mesh(geometry,obj.shader);//new THREE.MeshBasicMaterial({color: 0xFFFFFF}));
+		scene.add(obj.mesh);
+		obj.mesh.position.x = x;
+		obj.mesh.position.y = y;
 	} else if(type == playerShieldType) {	//player character "forcefield"
 		//obj.draw = something	//TODO: draw method for this
 		obj.indepObject = false;
 		fdef.shape = new b2CircleShape(dims);
+		var geometry = new THREE.Geometry();
+		geometry.vertices.push(new THREE.Vector3(0,0,99));
+		geometry.vertices.push(new THREE.Vector3(dims,0,99));
+		for(i = 1; i < 200; i++){
+			geometry.vertices.push(new THREE.Vector3(dims*Math.cos(i*Math.PI/100),dims*Math.sin(i*Math.PI/100),0,99));
+			geometry.faces.push(new THREE.Face3(0,i,i+1));
+		}
+		geometry.faces.push(new THREE.Face3(0,200,1));
+		obj.shader = new THREE.ShaderMaterial({
+			uniforms: {'strength' : {'type' : 'f', 'value' : 0.5+obj.timer/60.0},'radius' : {'type' : 'f', 'value' : dims}},
+			attributes: {},
+			vertexShader: vShieldShader,
+			fragmentShader: fShieldShader
+		});
+		obj.mesh = new THREE.Mesh(geometry,obj.shader);//new THREE.MeshBasicMaterial({color: 0xFFFFFF}));
+		scene.add(obj.mesh);
+		obj.mesh.position.x = x;
+		obj.mesh.position.y = y;
+		
+		
+		
+		
 	} else if(type == crateType) {
 		obj.draw = drawCrate;
 		fdef.shape = new b2PolygonShape;
 		fdef.shape.SetAsBox(dims[0]/2,dims[1]/2);
+		var geometry = new THREE.Geometry();
+		geometry.vertices.push(new THREE.Vector3(+dims[0]/2,-dims[1]/2,90));
+		geometry.vertices.push(new THREE.Vector3(+dims[0]/2,+dims[1]/2,90));
+		geometry.vertices.push(new THREE.Vector3(-dims[0]/2,+dims[1]/2,90));
+		geometry.vertices.push(new THREE.Vector3(-dims[0]/2,-dims[1]/2,90));
+		geometry.faces.push(new THREE.Face4(0,1,2,3));
+		obj.mesh = new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({color: 0xFFFFFF}));
+		scene.add(obj.mesh);
+		obj.mesh.position.x = x;
+		obj.mesh.position.y = y;
 	}
 	obj.fixture = obj.body.CreateFixture(fdef);
 	return obj;
@@ -133,13 +223,15 @@ function makeObject(type, x, y, theta, dims) {	//creates an object with the spec
 function damage(b1, b2, impulse) {
 	if(b1.type == playerShieldType) {	//collisions with player shield
 		var imp = impulse.normalImpulses;
+			Player.shield.timer = 30;
 		var hit = Math.sqrt(imp[0]*imp[0]+imp[1]*imp[1])/1000-pDamageThreshold;
 		if(hit > 0) {
 			Player.health -= hit;
 		}
 	}
-	else if(b1.type == enemyShieldType) {	//collisions with player shield
+	else if(b1.type == enemyShieldType) {	//collisions with enemy shield
 		var imp = impulse.normalImpulses;
+		b1.data.shield.timer = 30;
 		var hit = Math.sqrt(imp[0]*imp[0]+imp[1]*imp[1])/1000-eDamageThreshold;
 		if(hit > 0) {
 			b1.data.health -= hit;

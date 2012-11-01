@@ -6,6 +6,101 @@
 		<div id="container" style="width:1500; height:500; position:absolute;"></div>
 		<!--<canvas id="canvas" width="1500" height="500" style="border-color:#999; border-style:solid;"></canvas>-->
 	</body>
+	<script id="vShieldShader" type="x-shader/x-vertex">
+		uniform float radius;
+		uniform float strength;
+		varying float rad;
+		varying vec2 pos;
+		void main(void) {
+			pos.x = position.x/radius;
+			pos.y = position.y/radius;
+			float b = 0.0;
+			rad = sqrt((pos.x+b)*(pos.x+b)+(pos.y+b)*(pos.y+b));
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+			}
+</script>
+	<script id="fShieldShader" type="x-shader/x-fragment">
+		#ifdef GL_ES
+		precision highp float;
+		#endif
+		
+		uniform float strength;
+		varying float rad;
+		varying vec2 pos;
+		
+		void main(void) {
+			//if(rad >= 3.21736){discard;}
+			
+			gl_FragColor = vec4(0.0, 1.0, 1.0, (1.0-sqrt(1.0-rad*rad)/2.0)*0.4*strength);
+			}
+</script>
+	<script id="vCrateShader" type="x-shader/x-vertex">
+		attribute vec4 squareInfo;
+		varying vec2 ipos;
+		varying float outerslope;	//outer edge of main flat area
+		varying float innerslope;	//inner edge of main flat area
+		varying float coreedge;	//outer edge of center flat area
+		varying float theta;	//angle of rotation(0 is up)
+		varying float phi;	//light angle
+		
+		uniform float time;
+		
+		void main(void) {
+			float PI = 3.14159265358979323846264;
+			ipos = squareInfo.xy;
+		  	outerslope = 0.8;
+		  	innerslope = 0.6;
+		  	coreedge = 0.5;
+		  	theta = time/2.0;
+		  	phi = -PI/4.0;
+		  	vec2 newpos = ipos;
+		  	newpos.x = ipos.x*cos(theta) - ipos.y*sin(theta);
+		  	newpos.y = ipos.x*sin(theta) + ipos.y*cos(theta);
+		  	
+		  	gl_Position = vec4(newpos*squareInfo.z + vec2(0,0), 0.0, 1.0);
+		}
+</script>
+	<script id="fCrateShader" type="x-shader/x-fragment">
+		#ifdef GL_ES
+		precision highp float;
+		#endif
+		varying vec2 ipos;
+		varying float outerslope;
+		varying float innerslope;
+		varying float coreedge;
+		varying float theta;
+		varying float phi;
+		
+		uniform float time;
+		
+		void main(void) {
+			float PI = 3.14159265358979323846264;
+			float r = sqrt(ipos.x*ipos.x + ipos.y*ipos.y);
+			
+			float outer = smoothstep(outerslope+.01,outerslope-.01,abs(ipos.x)) * smoothstep(outerslope+.01,outerslope-.01,abs(ipos.y));
+			float inner = smoothstep(innerslope+.01,innerslope-.01,abs(ipos.x)) * smoothstep(innerslope+.01,innerslope-.01,abs(ipos.y));
+			float core = smoothstep(coreedge+.01,coreedge-.01,abs(ipos.x)) * smoothstep(coreedge +.01, coreedge-.01,abs(ipos.y));
+			
+			float tritop = smoothstep(-0.01,0.01,ipos.x+ipos.y) * smoothstep(0.01,-0.01,ipos.x-ipos.y);
+			float trilef = smoothstep(0.01,-0.01,ipos.x+ipos.y) * smoothstep(0.01,-0.01,ipos.x-ipos.y);
+			float trirgt = smoothstep(-0.01,0.01,ipos.x+ipos.y) * smoothstep(-0.01,0.01,ipos.x-ipos.y);
+			float tribtm = smoothstep(0.01,-0.01,ipos.x+ipos.y) * smoothstep(-0.01,0.01,ipos.x-ipos.y);
+			
+			float topil = sin(phi)*sin(theta)+cos(phi)*cos(theta);
+			float lefil = sin(phi)*sin(theta+PI/2.0)+cos(phi)*cos(theta+PI/2.0);
+			float rgtil = sin(phi)*sin(theta-PI/2.0)+cos(phi)*cos(theta-PI/2.0);
+			float btmil = sin(phi)*sin(theta+PI)+cos(phi)*cos(theta+PI);
+			
+			float lights = (1.0-outer-inner+core)*(topil*tritop+lefil*trilef+rgtil*trirgt+btmil*tribtm);	//illumination/shadow on slopes
+			float shade = (-1.0+outer-inner+core);	//shadow on slopes
+			
+			gl_FragColor = vec4(
+			0.8+lights*0.3+shade*0.2,
+			0.8+lights*0.3+shade*0.2,
+			0.8+lights*0.3+shade*0.2,
+			1.0);
+		}
+	</script>
 	<script type="text/javascript" src="Box2dWeb-2.1.a.3.min.js"></script>
 	<script type="text/javascript" src="Three.js"></script>
 	<script type="text/javascript" src="Globals.js"></script>
