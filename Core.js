@@ -1,5 +1,10 @@
 //Documentation stuff here
+
+
+
 function start() {
+
+
 	//RequestAnimationFrame code from flocking demo
 	var reqFrame = window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
@@ -75,7 +80,71 @@ function start() {
     var glowTgtMesh = new THREE.Mesh(glwgeo,glowTgtShader);
     scene.add(glowLineMesh);
     scene.add(glowTgtMesh);
-    
+
+/*	
+	var texture = THREE.ImageUtils.loadTexture('test.gif', function(){
+	rengl.render(scene)});
+	var material = new THREE.MeshBasicMaterial({map: texture});
+	var	geometry = new THREE.PlaneGeometry(100,100);
+	var	mesh = new THREE.Mesh(geometry, material);
+	scene.add(mesh);
+	var	pointLight = new THREE.PointLight(0xFFFFFF);
+	pointLight.position.x = 50;
+	pointLight.position.y = 50;
+	pointLight.position.z = 130;
+//	scene.addLight(pointLight);
+  */
+
+ // var texture = THREE.ImageUtils.loadTexture('test.gif');
+ /*
+  var bg = new THREE.Mesh(
+  new THREE.PlaneGeometry(2, 2, 0),
+  new THREE.MeshBasicMaterial({map: texture})
+);
+*/
+// The bg plane shouldn't care about the z-buffer.
+//	bg.material.depthTest = false;
+//	bg.material.depthWrite = false;
+
+	var bgScene = new THREE.Scene();
+	var bgCam = new THREE.Camera();
+	
+	function particleRender(context){
+		context.beginPath();
+		context.arc(0,0,1,0, Math.PI*2, true);
+		context.fill();
+	}
+	function makeParticles() {
+	var particle, material;
+	for (var zpos = -1000; zpos < 1000; zpos += 20){
+		material = new THREE.ParticleCanvasMaterial( {color: 0xffffff, program: particleRender});
+		particle = new THREE.Particle(material);
+		
+		particle.position.x = Math.random() * 1000 - 500;
+		particle.position.y = Math.random() * 1000 - 500;
+		
+		particle.position.z = zpos;
+		particle.scale.x = particle.scale.y = 10;
+		
+		bgScene.add(particle);
+		
+		particles.push(particle);
+	}
+	}
+	
+function updateParticles() {
+	for (var i = 0; i < particles.length; i++){
+		particle = particles[i];
+		
+		particle.position.x += 10;
+		
+		if(particle.position.x > 1000) particle.position.x = -500;
+		}
+}
+	makeParticles();
+	bgScene.add(bgCam);
+	//bgScene.add(bg);  
+	
     //TODO: FINAL LIST
     //TODO: HEALTH BAR
     //TODO: KILL TALLY
@@ -232,11 +301,15 @@ function start() {
     	//TODO: Click stuff
     	runEvents();
     	
-    	
+
     	/*
     	shape.rotation.z += .05;
     	shape.position.x = mousex;
     	shape.position.y = mousey;*/
+		rengl.autoClear = false;
+		rengl.clear();
+		updateParticles();
+		rengl.render(bgScene,bgCam);
     	rengl.render(scene, camera);
     	
     	

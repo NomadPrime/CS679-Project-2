@@ -60,6 +60,7 @@ var highyBound = 100;	//high y-axis boundary
 var objectList = [];	//list of free objects
 var enemyList = [];		//list of enemies
 var stuffList = [];		//list of misc stuff
+var particles = [];
 var keysDown = {};	//holds all keys currently pressed
 var container = null;	//holds the container
 var rengl = null;	//holds three.js webGL renderer
