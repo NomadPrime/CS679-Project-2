@@ -41,6 +41,7 @@ var anObject = {
 		this.mesh.position.x = pos.x;
 		this.mesh.position.y = pos.y;
 		this.mesh.rotation.z = this.body.GetAngle();
+		this.shader.uniforms.theta.value = this.body.GetAngle();
 		}
 		if((pos.x < lowxBound || pos.x > highxBound || pos.y < lowyBound || pos.y > highyBound) && this.indepObject == true || this.remove) {this.purge();}
 	},
@@ -108,10 +109,9 @@ function makeObject(type, x, y, theta, dims) {	//creates an object with the spec
 	obj = new Empty();
 	obj.type = type;
 	obj.dims = dims;
+	bdef.angle = 0;
 	bdef.position.Set(x,y);
-	bdef.angle = theta;
 	bdef.userData = obj;
-	obj.body = world.CreateBody(bdef);
 	if(type == playerType) {	//player type objects are polygons from an array of vertices
 		//TODO: Make the instantiation code here using a line from pvertices
 		obj.draw = playerPartDraw;
@@ -127,12 +127,41 @@ function makeObject(type, x, y, theta, dims) {	//creates an object with the spec
 		geometry.vertices.push(new THREE.Vector3(dims[2].x,dims[2].y,97));
 		geometry.vertices.push(new THREE.Vector3(dims[3].x,dims[3].y,97));
 		geometry.faces.push(new THREE.Face4(0,1,2,3));
-		obj.mesh = new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({color: 0x555555}));
+		if(theta >= 7) {
+			obj.shader = new THREE.ShaderMaterial({
+				uniforms: {
+					theta : {type : 'f', value : 0},
+					size : {type : 'f', value : Player.size},
+					v1 : {type : 'v2', value : new THREE.Vector2(dims[0].x,dims[0].y)},
+					v2 : {type : 'v2', value : new THREE.Vector2(dims[1].x,dims[1].y)},
+					v3 : {type : 'v2', value : new THREE.Vector2(dims[2].x,dims[2].y)},
+					v4 : {type : 'v2', value : new THREE.Vector2(dims[3].x,dims[3].y)},
+					},
+				attributes: {},
+				vertexShader: vGlassShader,
+				fragmentShader: fGlassShader
+			});
+		} else {
+			obj.shader = new THREE.ShaderMaterial({
+				uniforms: {
+					theta : {type : 'f', value : 0},
+					size : {type : 'f', value : Player.size},
+					v1 : {type : 'v2', value : new THREE.Vector2(dims[0].x,dims[0].y)},
+					v2 : {type : 'v2', value : new THREE.Vector2(dims[1].x,dims[1].y)},
+					v3 : {type : 'v2', value : new THREE.Vector2(dims[2].x,dims[2].y)},
+					v4 : {type : 'v2', value : new THREE.Vector2(dims[3].x,dims[3].y)},
+					},
+				attributes: {},
+				vertexShader: vGreyShader,
+				fragmentShader: fGreyShader
+			});
+		}
+		obj.mesh = new THREE.Mesh(geometry,obj.shader);
 		scene.add(obj.mesh);
 		obj.mesh.position.x = x;
 		obj.mesh.position.y = y;
 		
-	} else if(type == enemyType) {	//TODO: Enemy type stuff goes here
+	} else if(type == enemyType) {
 		obj.indepObject = false;
 		fdef.shape = new b2PolygonShape;
 		fdef.shape.SetAsArray(dims, dims.length);
@@ -145,7 +174,36 @@ function makeObject(type, x, y, theta, dims) {	//creates an object with the spec
 		geometry.vertices.push(new THREE.Vector3(dims[2].x,dims[2].y,97));
 		geometry.vertices.push(new THREE.Vector3(dims[3].x,dims[3].y,97));
 		geometry.faces.push(new THREE.Face4(0,1,2,3));
-		obj.mesh = new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({color: 0xFF0000}));
+		if(theta >= 1) {
+			obj.shader = new THREE.ShaderMaterial({
+				uniforms: {
+					theta : {type : 'f', value : 0},
+					size : {type : 'f', value : anEnemy.size},
+					v1 : {type : 'v2', value : new THREE.Vector2(dims[0].x,dims[0].y)},
+					v2 : {type : 'v2', value : new THREE.Vector2(dims[1].x,dims[1].y)},
+					v3 : {type : 'v2', value : new THREE.Vector2(dims[2].x,dims[2].y)},
+					v4 : {type : 'v2', value : new THREE.Vector2(dims[3].x,dims[3].y)},
+					},
+				attributes: {},
+				vertexShader: vGlassShader,
+				fragmentShader: fGlassShader
+			});
+		} else {
+			obj.shader = new THREE.ShaderMaterial({
+				uniforms: {
+					theta : {type : 'f', value : 0},
+					size : {type : 'f', value : anEnemy.size},
+					v1 : {type : 'v2', value : new THREE.Vector2(dims[0].x,dims[0].y)},
+					v2 : {type : 'v2', value : new THREE.Vector2(dims[1].x,dims[1].y)},
+					v3 : {type : 'v2', value : new THREE.Vector2(dims[2].x,dims[2].y)},
+					v4 : {type : 'v2', value : new THREE.Vector2(dims[3].x,dims[3].y)},
+					},
+				attributes: {},
+				vertexShader: vRedShader,
+				fragmentShader: fRedShader
+			});
+		}
+		obj.mesh = new THREE.Mesh(geometry,obj.shader);
 		scene.add(obj.mesh);
 		obj.mesh.position.x = x;
 		obj.mesh.position.y = y;
@@ -157,11 +215,11 @@ function makeObject(type, x, y, theta, dims) {	//creates an object with the spec
 		var geometry = new THREE.Geometry();
 		geometry.vertices.push(new THREE.Vector3(0,0,99));
 		geometry.vertices.push(new THREE.Vector3(dims,0,99));
-		for(i = 1; i < 200; i++){
-			geometry.vertices.push(new THREE.Vector3(dims*Math.cos(i*Math.PI/100),dims*Math.sin(i*Math.PI/100),0,99));
+		for(i = 1; i < 50; i++){
+			geometry.vertices.push(new THREE.Vector3(dims*Math.cos(i*Math.PI/25),dims*Math.sin(i*Math.PI/25),0,99));
 			geometry.faces.push(new THREE.Face3(0,i,i+1));
 		}
-		geometry.faces.push(new THREE.Face3(0,200,1));
+		geometry.faces.push(new THREE.Face3(0,50,1));
 		obj.shader = new THREE.ShaderMaterial({
 			uniforms: {'strength' : {'type' : 'f', 'value' : 0.5+obj.timer/60.0},'radius' : {'type' : 'f', 'value' : dims}},
 			attributes: {},
@@ -179,11 +237,11 @@ function makeObject(type, x, y, theta, dims) {	//creates an object with the spec
 		var geometry = new THREE.Geometry();
 		geometry.vertices.push(new THREE.Vector3(0,0,99));
 		geometry.vertices.push(new THREE.Vector3(dims,0,99));
-		for(i = 1; i < 200; i++){
-			geometry.vertices.push(new THREE.Vector3(dims*Math.cos(i*Math.PI/100),dims*Math.sin(i*Math.PI/100),0,99));
+		for(i = 1; i < 50; i++){
+			geometry.vertices.push(new THREE.Vector3(dims*Math.cos(i*Math.PI/25),dims*Math.sin(i*Math.PI/25),0,99));
 			geometry.faces.push(new THREE.Face3(0,i,i+1));
 		}
-		geometry.faces.push(new THREE.Face3(0,200,1));
+		geometry.faces.push(new THREE.Face3(0,50,1));
 		obj.shader = new THREE.ShaderMaterial({
 			uniforms: {'strength' : {'type' : 'f', 'value' : 0.5+obj.timer/60.0},'radius' : {'type' : 'f', 'value' : dims}},
 			attributes: {},
@@ -199,20 +257,46 @@ function makeObject(type, x, y, theta, dims) {	//creates an object with the spec
 		
 		
 	} else if(type == crateType) {
+		bdef.angle = theta;
 		obj.draw = drawCrate;
 		fdef.shape = new b2PolygonShape;
 		fdef.shape.SetAsBox(dims[0]/2,dims[1]/2);
 		var geometry = new THREE.Geometry();
+		
 		geometry.vertices.push(new THREE.Vector3(+dims[0]/2,-dims[1]/2,90));
 		geometry.vertices.push(new THREE.Vector3(+dims[0]/2,+dims[1]/2,90));
 		geometry.vertices.push(new THREE.Vector3(-dims[0]/2,+dims[1]/2,90));
 		geometry.vertices.push(new THREE.Vector3(-dims[0]/2,-dims[1]/2,90));
 		geometry.faces.push(new THREE.Face4(0,1,2,3));
-		obj.mesh = new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({color: 0xFFFFFF}));
+		
+		
+		
+		/*for(i = 0; i < 5; i++) {
+			for(j = 0; j < 5; j++) {
+				geometry.vertices.push(new THREE.Vector3(dims[0]*(j/4.0-0.5),dims[1]*(i/4.0-0.5),90));
+				if(i > 0 && j > 0) {
+					geometry.faces.push(new THREE.Face4((i-1)*5+j-1,(i-1)*5+j,i*5+j,i*5+j-1));
+				}
+			}
+		}*/
+		
+		
+		
+		
+		//obj.mesh = new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({color: 0xFFFFFF}));
+		
+		obj.shader = new THREE.ShaderMaterial({
+			uniforms: {'theta' : {'type' : 'f', 'value' : theta},'hwidth' : {'type' : 'f', 'value' : dims[0]/2}, 'hheight' : {'type' : 'f', 'value' : dims[1]/2}},
+			attributes: {},
+			vertexShader: vCrateShader,
+			fragmentShader: fCrateShader
+		});
+		obj.mesh = new THREE.Mesh(geometry,obj.shader);
 		scene.add(obj.mesh);
 		obj.mesh.position.x = x;
 		obj.mesh.position.y = y;
 	}
+	obj.body = world.CreateBody(bdef);
 	obj.fixture = obj.body.CreateFixture(fdef);
 	return obj;
 }
@@ -223,7 +307,7 @@ function makeObject(type, x, y, theta, dims) {	//creates an object with the spec
 function damage(b1, b2, impulse) {
 	if(b1.type == playerShieldType) {	//collisions with player shield
 		var imp = impulse.normalImpulses;
-			Player.shield.timer = 30;
+		Player.shield.timer = 30;
 		var hit = Math.sqrt(imp[0]*imp[0]+imp[1]*imp[1])/1000-pDamageThreshold;
 		if(hit > 0) {
 			Player.health -= hit;
@@ -232,7 +316,9 @@ function damage(b1, b2, impulse) {
 	else if(b1.type == enemyShieldType) {	//collisions with enemy shield
 		var imp = impulse.normalImpulses;
 		b1.data.shield.timer = 30;
-		var hit = Math.sqrt(imp[0]*imp[0]+imp[1]*imp[1])/1000-eDamageThreshold;
+		var dt = eDamageThreshold;
+		if(b2.type == enemyShieldType) {dt = dt * 6;}	//dumbass enemy protection
+		var hit = Math.sqrt(imp[0]*imp[0]+imp[1]*imp[1])/1000-dt;
 		if(hit > 0) {
 			b1.data.health -= hit;
 		}

@@ -18,7 +18,7 @@
 			rad = sqrt((pos.x+b)*(pos.x+b)+(pos.y+b)*(pos.y+b));
 			gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 			}
-</script>
+	</script>
 	<script id="fShieldShader" type="x-shader/x-fragment">
 		#ifdef GL_ES
 		precision highp float;
@@ -33,33 +33,33 @@
 			
 			gl_FragColor = vec4(0.0, 1.0, 1.0, (1.0-sqrt(1.0-rad*rad)/2.0)*0.4*strength);
 			}
-</script>
+	</script>
 	<script id="vCrateShader" type="x-shader/x-vertex">
-		attribute vec4 squareInfo;
+		uniform float theta;
+		uniform float hwidth;
+		uniform float hheight;
 		varying vec2 ipos;
 		varying float outerslope;	//outer edge of main flat area
 		varying float innerslope;	//inner edge of main flat area
 		varying float coreedge;	//outer edge of center flat area
-		varying float theta;	//angle of rotation(0 is up)
+		//varying float theta;	//angle of rotation(0 is up)
 		varying float phi;	//light angle
-		
-		uniform float time;
 		
 		void main(void) {
 			float PI = 3.14159265358979323846264;
-			ipos = squareInfo.xy;
+			ipos.x = position.x / hwidth;
+			ipos.y = position.y / hheight;
 		  	outerslope = 0.8;
 		  	innerslope = 0.6;
 		  	coreedge = 0.5;
-		  	theta = time/2.0;
-		  	phi = -PI/4.0;
-		  	vec2 newpos = ipos;
-		  	newpos.x = ipos.x*cos(theta) - ipos.y*sin(theta);
-		  	newpos.y = ipos.x*sin(theta) + ipos.y*cos(theta);
+		  	phi = -PI/3.0;
+		  	//vec2 newpos = ipos;
+		  	//newpos.x = ipos.x*cos(theta) - ipos.y*sin(theta);
+		  	//newpos.y = ipos.x*sin(theta) + ipos.y*cos(theta);
 		  	
-		  	gl_Position = vec4(newpos*squareInfo.z + vec2(0,0), 0.0, 1.0);
+		  	gl_Position = projectionMatrix * modelViewMatrix * vec4(position.x, position.y, position.z, 1.0);
 		}
-</script>
+	</script>
 	<script id="fCrateShader" type="x-shader/x-fragment">
 		#ifdef GL_ES
 		precision highp float;
@@ -68,14 +68,11 @@
 		varying float outerslope;
 		varying float innerslope;
 		varying float coreedge;
-		varying float theta;
+		uniform float theta;
 		varying float phi;
-		
-		uniform float time;
 		
 		void main(void) {
 			float PI = 3.14159265358979323846264;
-			float r = sqrt(ipos.x*ipos.x + ipos.y*ipos.y);
 			
 			float outer = smoothstep(outerslope+.01,outerslope-.01,abs(ipos.x)) * smoothstep(outerslope+.01,outerslope-.01,abs(ipos.y));
 			float inner = smoothstep(innerslope+.01,innerslope-.01,abs(ipos.x)) * smoothstep(innerslope+.01,innerslope-.01,abs(ipos.y));
@@ -95,10 +92,197 @@
 			float shade = (-1.0+outer-inner+core);	//shadow on slopes
 			
 			gl_FragColor = vec4(
-			0.8+lights*0.3+shade*0.2,
-			0.8+lights*0.3+shade*0.2,
-			0.8+lights*0.3+shade*0.2,
+			0.5+lights*0.5+shade*0.0,
+			0.5+lights*0.5+shade*0.0,
+			0.5+lights*0.5+shade*0.0,
 			1.0);
+		}
+	</script>
+	<script id="vGlassShader" type="x-shader/x-vertex">
+		varying vec2 pos;
+		
+		void main(void) {
+			float PI = 3.14159265358979323846264;
+			pos.x = position.x;
+			pos.y = position.y;
+			
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(position.x, position.y, position.z, 1.0);
+		}
+	</script>
+	<script id="fGlassShader" type="x-shader/x-fragment">
+		#ifdef GL_ES
+		precision highp float;
+		#endif
+		uniform float size;
+		uniform float theta;
+		uniform vec2 v1;
+		uniform vec2 v2;
+		uniform vec2 v3;
+		uniform vec2 v4;
+		varying vec2 pos;
+		
+		void main(void) {
+			float PI = 3.14159265358979323846264;
+		  	float phi = -PI/6.0;
+			float border = 0.1;
+			float d12 = ((v1.y-v2.y)*pos.x+(v2.x-v1.x)*pos.y+(v1.x*v2.y-v2.x*v1.y))/sqrt((v2.x-v1.x)*(v2.x-v1.x)+(v2.y-v1.y)*(v2.y-v1.y));
+			float d23 = ((v2.y-v3.y)*pos.x+(v3.x-v2.x)*pos.y+(v2.x*v3.y-v3.x*v2.y))/sqrt((v3.x-v2.x)*(v3.x-v2.x)+(v3.y-v2.y)*(v3.y-v2.y));
+			float d34 = ((v3.y-v4.y)*pos.x+(v4.x-v3.x)*pos.y+(v3.x*v4.y-v4.x*v3.y))/sqrt((v4.x-v3.x)*(v4.x-v3.x)+(v4.y-v3.y)*(v4.y-v3.y));
+			float d45 = ((v4.y-v1.y)*pos.x+(v1.x-v4.x)*pos.y+(v4.x*v1.y-v1.x*v4.y))/sqrt((v1.x-v4.x)*(v1.x-v4.x)+(v1.y-v4.y)*(v1.y-v4.y));
+			float face12 = smoothstep(border + 0.01, border - 0.01, d12);// * smoothstep(d23 + 0.01, d23 - 0.01, d12) * smoothstep(d41 + 0.01, d41 - 0.01, d12);
+			float face23 = smoothstep(border + 0.01, border - 0.01, d23);// * smoothstep(d34 + 0.01, d34 - 0.01, d23) * smoothstep(d12 + 0.01, d12 - 0.01, d23);
+			float face34 = smoothstep(border + 0.01, border - 0.01, d34);// * smoothstep(d41 + 0.01, d41 - 0.01, d34) * smoothstep(d23 + 0.01, d23 - 0.01, d34);
+			float face41 = smoothstep(border + 0.01, border - 0.01, d45);// * smoothstep(d12 + 0.01, d12 - 0.01, d41) * smoothstep(d34 + 0.01, d34 - 0.01, d41);
+			vec2 n12 = vec2(v1.y-v2.y,v2.x-v1.x);
+			vec2 n23 = vec2(v2.y-v3.y,v3.x-v2.x);
+			vec2 n34 = vec2(v3.y-v4.y,v4.x-v3.x);
+			vec2 n41 = vec2(v4.y-v1.y,v1.x-v4.x);
+			float a12 = atan(n12.y,n12.x);
+			float a23 = atan(n23.y,n23.x);
+			float a34 = atan(n34.y,n34.x);
+			float a41 = atan(n41.y,n41.x);
+			float il12 = cos(phi)*cos(-a12+theta)+sin(phi)*sin(-a12+theta);
+			float il23 = cos(phi)*cos(-a23+theta)+sin(phi)*sin(-a23+theta);
+			float il34 = cos(phi)*cos(-a34+theta)+sin(phi)*sin(-a34+theta);
+			float il41 = cos(phi)*cos(-a41+theta)+sin(phi)*sin(-a41+theta);
+			
+			gl_FragColor = vec4(
+			
+			0.2+(il12*face12+il23*face23+il34*face34+il41*face41)*0.4,
+			0.4+(il12*face12+il23*face23+il34*face34+il41*face41)*0.4,
+			0.8+(il12*face12+il23*face23+il34*face34+il41*face41)*0.4,
+			
+			1.0);
+		}
+	</script>
+	<script id="vGreyShader" type="x-shader/x-vertex">
+		varying vec2 pos;
+		
+		void main(void) {
+			float PI = 3.14159265358979323846264;
+			pos.x = position.x;
+			pos.y = position.y;
+			
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(position.x, position.y, position.z, 1.0);
+		}
+	</script>
+	<script id="fGreyShader" type="x-shader/x-fragment">
+		#ifdef GL_ES
+		precision highp float;
+		#endif
+		uniform float size;
+		uniform float theta;
+		uniform vec2 v1;
+		uniform vec2 v2;
+		uniform vec2 v3;
+		uniform vec2 v4;
+		varying vec2 pos;
+		
+		void main(void) {
+			float PI = 3.14159265358979323846264;
+		  	float phi = -2.0*PI/3.0;
+			float border = 0.07;
+			float face12 = smoothstep(border + 0.01, border - 0.01, ((v1.y-v2.y)*pos.x+(v2.x-v1.x)*pos.y+(v1.x*v2.y-v2.x*v1.y))/sqrt((v2.x-v1.x)*(v2.x-v1.x)+(v2.y-v1.y)*(v2.y-v1.y)));
+			float face23 = smoothstep(border + 0.01, border - 0.01, ((v2.y-v3.y)*pos.x+(v3.x-v2.x)*pos.y+(v2.x*v3.y-v3.x*v2.y))/sqrt((v3.x-v2.x)*(v3.x-v2.x)+(v3.y-v2.y)*(v3.y-v2.y)));
+			float face34 = smoothstep(border + 0.01, border - 0.01, ((v3.y-v4.y)*pos.x+(v4.x-v3.x)*pos.y+(v3.x*v4.y-v4.x*v3.y))/sqrt((v4.x-v3.x)*(v4.x-v3.x)+(v4.y-v3.y)*(v4.y-v3.y)));
+			float face41 = smoothstep(border + 0.01, border - 0.01, ((v4.y-v1.y)*pos.x+(v1.x-v4.x)*pos.y+(v4.x*v1.y-v1.x*v4.y))/sqrt((v1.x-v4.x)*(v1.x-v4.x)+(v1.y-v4.y)*(v1.y-v4.y)));
+			vec2 n12 = vec2(v1.y-v2.y,v2.x-v1.x);
+			vec2 n23 = vec2(v2.y-v3.y,v3.x-v2.x);
+			vec2 n34 = vec2(v3.y-v4.y,v4.x-v3.x);
+			vec2 n41 = vec2(v4.y-v1.y,v1.x-v4.x);
+			float a12 = atan(n12.y,n12.x);
+			float a23 = atan(n23.y,n23.x);
+			float a34 = atan(n34.y,n34.x);
+			float a41 = atan(n41.y,n41.x);
+			float il12 = cos(phi)*cos(a12+theta)+sin(phi)*sin(a12+theta);
+			float il23 = cos(phi)*cos(a23+theta)+sin(phi)*sin(a23+theta);
+			float il34 = cos(phi)*cos(a34+theta)+sin(phi)*sin(a34+theta);
+			float il41 = cos(phi)*cos(a41+theta)+sin(phi)*sin(a41+theta);
+			
+			gl_FragColor = vec4(
+			
+			0.4+(il12*face12+il23*face23+il34*face34+il41*face41)*0.4,
+			0.4+(il12*face12+il23*face23+il34*face34+il41*face41)*0.4,
+			0.5+(il12*face12+il23*face23+il34*face34+il41*face41)*0.4,
+			
+			1.0);
+		}
+	</script>
+	<script id="vRedShader" type="x-shader/x-vertex">
+		varying vec2 pos;
+		
+		void main(void) {
+			float PI = 3.14159265358979323846264;
+			pos.x = position.x;
+			pos.y = position.y;
+			
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(position.x, position.y, position.z, 1.0);
+		}
+	</script>
+	<script id="fRedShader" type="x-shader/x-fragment">
+		#ifdef GL_ES
+		precision highp float;
+		#endif
+		uniform float size;
+		uniform float theta;
+		uniform vec2 v1;
+		uniform vec2 v2;
+		uniform vec2 v3;
+		uniform vec2 v4;
+		varying vec2 pos;
+		
+		void main(void) {
+			float PI = 3.14159265358979323846264;
+		  	float phi = -2.0*PI/3.0;
+			float border = 0.1;
+			float face12 = smoothstep(border + 0.01, border - 0.01, ((v1.y-v2.y)*pos.x+(v2.x-v1.x)*pos.y+(v1.x*v2.y-v2.x*v1.y))/sqrt((v2.x-v1.x)*(v2.x-v1.x)+(v2.y-v1.y)*(v2.y-v1.y)));
+			float face23 = smoothstep(border + 0.01, border - 0.01, ((v2.y-v3.y)*pos.x+(v3.x-v2.x)*pos.y+(v2.x*v3.y-v3.x*v2.y))/sqrt((v3.x-v2.x)*(v3.x-v2.x)+(v3.y-v2.y)*(v3.y-v2.y)));
+			float face34 = smoothstep(border + 0.01, border - 0.01, ((v3.y-v4.y)*pos.x+(v4.x-v3.x)*pos.y+(v3.x*v4.y-v4.x*v3.y))/sqrt((v4.x-v3.x)*(v4.x-v3.x)+(v4.y-v3.y)*(v4.y-v3.y)));
+			float face41 = smoothstep(border + 0.01, border - 0.01, ((v4.y-v1.y)*pos.x+(v1.x-v4.x)*pos.y+(v4.x*v1.y-v1.x*v4.y))/sqrt((v1.x-v4.x)*(v1.x-v4.x)+(v1.y-v4.y)*(v1.y-v4.y)));
+			vec2 n12 = vec2(v1.y-v2.y,v2.x-v1.x);
+			vec2 n23 = vec2(v2.y-v3.y,v3.x-v2.x);
+			vec2 n34 = vec2(v3.y-v4.y,v4.x-v3.x);
+			vec2 n41 = vec2(v4.y-v1.y,v1.x-v4.x);
+			float a12 = atan(n12.y,n12.x);
+			float a23 = atan(n23.y,n23.x);
+			float a34 = atan(n34.y,n34.x);
+			float a41 = atan(n41.y,n41.x);
+			float il12 = cos(phi)*cos(a12+theta)+sin(phi)*sin(a12+theta);
+			float il23 = cos(phi)*cos(a23+theta)+sin(phi)*sin(a23+theta);
+			float il34 = cos(phi)*cos(a34+theta)+sin(phi)*sin(a34+theta);
+			float il41 = cos(phi)*cos(a41+theta)+sin(phi)*sin(a41+theta);
+			
+			gl_FragColor = vec4(
+			
+			0.6+(il12*face12+il23*face23+il34*face34+il41*face41)*0.4,
+			0.2+(il12*face12+il23*face23+il34*face34+il41*face41)*0.4,
+			0.2+(il12*face12+il23*face23+il34*face34+il41*face41)*0.4,
+			1.0);
+		}
+	</script>
+	<script id="vGlowLine" type="x-shader/x-vertex">
+		uniform float length;
+		varying vec2 pos;
+		
+		void main(void) {
+			pos.x = position.x;
+			pos.y = position.y * length;
+			
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(pos.x, pos.y, position.z, 1.0);
+		}
+	</script>
+	<script id="fGlowLine" type="x-shader/x-fragment">
+		#ifdef GL_ES
+		precision highp float;
+		#endif
+		uniform float active;
+		uniform float length;
+		varying vec2 pos;
+		
+		float q = min(length-pos.y,1.0)*min(1.0,pos.y);
+		
+		void main(void) {
+			gl_FragColor = vec4(0.0,1.0,1.0,active*(1.0-pos.x*pos.x*4.0)*q);
 		}
 	</script>
 	<script type="text/javascript" src="Box2dWeb-2.1.a.3.min.js"></script>

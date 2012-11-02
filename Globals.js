@@ -71,4 +71,11 @@ var vShieldShader;
 var fShieldShader;
 var vCrateShader;
 var fCrateShader;
-
+var vGreyShader;
+var fGreyShader;
+var vRedShader;
+var fRedShader;
+var vGlassShader;
+var fGlassShader;
+var vGlowLine;
+var fGlowLine;

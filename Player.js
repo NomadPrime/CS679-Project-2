@@ -16,21 +16,38 @@ var pvers = [	//vertices of all bodies of player
 [[-.210,-.500], [-.500,-.210], [-.360,-.151], [-.151,-.360]],
 [[-.151,-.360], [-.360,-.151], [-.143,-.060], [-.060,-.143]],
 ];*/
+/*
+var pvers = [	//vertices of all bodies of player
+[new b2Vec2(0.143,0.060), new b2Vec2(-.143,0.060), new b2Vec2(-.025,-.058), new b2Vec2(0.025,-.058)],
+[new b2Vec2(0.060,0.143), new b2Vec2(-.060,0.143), new b2Vec2(-.143,0.060), new b2Vec2(0.143,0.060)],
+[new b2Vec2(-.143,0.060), new b2Vec2(-.500,0.210), new b2Vec2(-.500,-.210), new b2Vec2(-.058,-.025)],
+[new b2Vec2(-.058,-.025), new b2Vec2(-.500,-.210), new b2Vec2(-.210,-.500), new b2Vec2(-.025,-.058)],
+[new b2Vec2(0.025,-.058), new b2Vec2(-.025,-.058), new b2Vec2(-.210,-.500), new b2Vec2(0.210,-.500)],
+[new b2Vec2(0.058,-.025), new b2Vec2(0.025,-.058), new b2Vec2(0.210,-.500), new b2Vec2(0.500,-.210)],
+[new b2Vec2(0.500,0.210), new b2Vec2(0.143,0.060), new b2Vec2(0.058,-.025), new b2Vec2(0.500,-.210)],
+[new b2Vec2(0.500,0.210), new b2Vec2(0.210,0.500), new b2Vec2(0.151,0.360), new b2Vec2(0.360,0.151)],
+[new b2Vec2(0.360,0.151), new b2Vec2(0.151,0.360), new b2Vec2(0.060,0.143), new b2Vec2(0.143,0.060)],
+[new b2Vec2(0.210,0.500), new b2Vec2(-.210,0.500), new b2Vec2(-.151,0.360), new b2Vec2(0.151,0.360)],
+[new b2Vec2(0.151,0.360), new b2Vec2(-.151,0.360), new b2Vec2(-.060,0.143), new b2Vec2(0.060,0.143)],
+[new b2Vec2(-.210,0.500), new b2Vec2(-.500,0.210), new b2Vec2(-.360,0.151), new b2Vec2(-.151,0.360)],
+[new b2Vec2(-.151,0.360), new b2Vec2(-.360,0.151), new b2Vec2(-.143,0.060), new b2Vec2(-.060,0.143)],
+];*/
+
 
 var pvers = [	//vertices of all bodies of player
-[new b2Vec2(0.025,0.058), new b2Vec2(-.025,0.058), new b2Vec2(-.143,-.060), new b2Vec2(0.143,-.060)],
-[new b2Vec2(0.143,-.060), new b2Vec2(-.143,-.060), new b2Vec2(-.060,-.143), new b2Vec2(0.060,-.143)],
-[new b2Vec2(-.058,0.025), new b2Vec2(-.500,0.210), new b2Vec2(-.500,-.210), new b2Vec2(-.143,-.060)],
-[new b2Vec2(-.025,0.058), new b2Vec2(-.210,0.500), new b2Vec2(-.500,0.210), new b2Vec2(-.058,0.025)],
-[new b2Vec2(0.210,0.500), new b2Vec2(-.210,0.500), new b2Vec2(-.025,0.058), new b2Vec2(0.025,0.058)],
-[new b2Vec2(0.500,0.210), new b2Vec2(0.210,0.500), new b2Vec2(0.025,0.058), new b2Vec2(0.058,0.025)],
-[new b2Vec2(0.500,0.210), new b2Vec2(0.058,0.025), new b2Vec2(0.143,-.060), new b2Vec2(0.500,-.210)],
-[new b2Vec2(0.360,-.151), new b2Vec2(0.151,-.360), new b2Vec2(0.210,-.500), new b2Vec2(0.500,-.210)],
-[new b2Vec2(0.143,-.060), new b2Vec2(0.060,-.143), new b2Vec2(0.151,-.360), new b2Vec2(0.360,-.151)],
-[new b2Vec2(0.151,-.360), new b2Vec2(-.151,-.360), new b2Vec2(-.210,-.500), new b2Vec2(0.210,-.500)],
-[new b2Vec2(0.060,-.143), new b2Vec2(-.060,-.143), new b2Vec2(-.151,-.360), new b2Vec2(0.151,-.360)],
-[new b2Vec2(-.151,-.360), new b2Vec2(-.360,-.151), new b2Vec2(-.500,-.210), new b2Vec2(-.210,-.500)],
-[new b2Vec2(-.060,-.143), new b2Vec2(-.143,-.060), new b2Vec2(-.360,-.151), new b2Vec2(-.151,-.360)],
+[new b2Vec2(0.143,0.060), new b2Vec2(-.143,0.060), new b2Vec2(-.025,-.058), new b2Vec2(0.025,-.058)],
+[new b2Vec2(0.060,0.143), new b2Vec2(-.060,0.143), new b2Vec2(-.143,0.060), new b2Vec2(0.143,0.060)],
+[new b2Vec2(-.143,0.060), new b2Vec2(-.500,0.210), new b2Vec2(-.500,-.210), new b2Vec2(-.058,-.025)],
+[new b2Vec2(-.058,-.025), new b2Vec2(-.500,-.210), new b2Vec2(-.210,-.500), new b2Vec2(-.025,-.058)],
+[new b2Vec2(0.025,-.058), new b2Vec2(-.025,-.058), new b2Vec2(-.210,-.500), new b2Vec2(0.210,-.500)],
+[new b2Vec2(0.058,-.025), new b2Vec2(0.025,-.058), new b2Vec2(0.210,-.500), new b2Vec2(0.500,-.210)],
+[new b2Vec2(0.500,0.210), new b2Vec2(0.143,0.060), new b2Vec2(0.058,-.025), new b2Vec2(0.500,-.210)],
+[new b2Vec2(0.500,0.210), new b2Vec2(0.210,0.500), new b2Vec2(0.151,0.360), new b2Vec2(0.360,0.151)],
+[new b2Vec2(0.360,0.151), new b2Vec2(0.151,0.360), new b2Vec2(0.060,0.143), new b2Vec2(0.143,0.060)],
+[new b2Vec2(0.210,0.500), new b2Vec2(-.210,0.500), new b2Vec2(-.151,0.360), new b2Vec2(0.151,0.360)],
+[new b2Vec2(0.151,0.360), new b2Vec2(-.151,0.360), new b2Vec2(-.060,0.143), new b2Vec2(0.060,0.143)],
+[new b2Vec2(-.210,0.500), new b2Vec2(-.500,0.210), new b2Vec2(-.360,0.151), new b2Vec2(-.151,0.360)],
+[new b2Vec2(-.151,0.360), new b2Vec2(-.360,0.151), new b2Vec2(-.143,0.060), new b2Vec2(-.060,0.143)],
 ];
 
 var Player = {
@@ -44,8 +61,8 @@ var Player = {
 	"alive" : true,	//so the dead routine doesn't repeat
 	
 	init : function() {	//initializes the player at starting point
-		
-
+		this.parts = [];
+		this.joints = [];
 		this.health = this.maxHealth;	//set health to maximum
 		for(i = 0; i < pvers.length; i++) {	//scales vertex coordinates to size of object
 			for(j = 0; j < pvers[i].length; j++) {
@@ -54,7 +71,7 @@ var Player = {
 		}
 		this.shield = makeObject(playerShieldType, 0, 0, 0, this.size * 0.7);
 		for(i = 0; i < pvers.length; i++) {
-			this.parts.push(makeObject(playerType, 0, 0, 0, pvers[i]));
+			this.parts.push(makeObject(playerType, 0, 0, i, pvers[i]));
 			objectList.push(this.parts[i]);
 			jdef.Initialize(this.shield.body, this.parts[i].body, this.shield.body.GetWorldCenter());
 			jdef.collideConnected = false;

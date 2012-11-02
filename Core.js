@@ -47,9 +47,40 @@ function start() {
     document.addEventListener("mousemove", function(e) {mousex = (e.clientX - container.offsetLeft - container.offsetWidth/2) / scale; mousey = -(e.clientY - container.offsetTop - container.offsetHeight/2) / scale;}, false);
     document.addEventListener("mouseup", function() {mouseDown = false;}, false);
     
+    var glowLineShader = new THREE.ShaderMaterial({
+    	uniforms : {
+    		length : {type : 'f', value : 1},
+    		active : {type : 'f', value : 0}
+    	},
+    	attributes : {},
+    	vertexShader : vGlowLine,
+    	fragmentShader : fGlowLine
+    });
+    var glowTgtShader = new THREE.ShaderMaterial({
+    	uniforms : {
+    		length : {type : 'f', value : 1},
+    		active : {type : 'f', value : 0}
+    	},
+    	attributes : {},
+    	vertexShader : vGlowLine,
+    	fragmentShader : fGlowLine
+    });
+    var glwgeo = new THREE.Geometry();
+    glwgeo.vertices.push(new THREE.Vector3(0.5,0,95));
+    glwgeo.vertices.push(new THREE.Vector3(0.5,1,95));
+    glwgeo.vertices.push(new THREE.Vector3(-0.5,1,95));
+    glwgeo.vertices.push(new THREE.Vector3(-0.5,0,95));
+    glwgeo.faces.push(new THREE.Face4(0,1,2,3));
+    var glowLineMesh = new THREE.Mesh(glwgeo,glowLineShader);
+    var glowTgtMesh = new THREE.Mesh(glwgeo,glowTgtShader);
+    scene.add(glowLineMesh);
+    scene.add(glowTgtMesh);
     
-    
-    
+    //TODO: FINAL LIST
+    //TODO: HEALTH BAR
+    //TODO: KILL TALLY
+    //TODO: BUBBLE FOR GRAVITY LAUNCHER
+    //TODO: INCORPORATE STARFIELD IF SULI MADE ONE
     
     function listen() {//account for effects of EventListeners
     	if(click) {
@@ -60,6 +91,8 @@ function start() {
     		ready = true;
     		click = false;
     	} else if(mouseDown) {
+    		glowLineShader.uniforms.active.value = 1.0;
+    		glowTgtShader.uniforms.active.value = 1.0;
     		max = launchMax/launchMult;
     		mag = Math.sqrt(Math.pow(mousex-mousexo,2)+Math.pow(mousey-mouseyo,2));
     		if(mag <= max) {
@@ -69,6 +102,12 @@ function start() {
     			mousext = mousexo + (mousex - mousexo) * max / mag;
     			mouseyt = mouseyo + (mousey - mouseyo) * max / mag;
     		}
+    		glowLineShader.uniforms.length.value = Math.sqrt(Math.pow(mousexo-Player.shield.body.GetPosition().x,2)+Math.pow(mouseyo-Player.shield.body.GetPosition().y,2));
+    		glowTgtShader.uniforms.length.value = Math.sqrt(Math.pow(mousext-mousexo,2)+Math.pow(mouseyt-mouseyo,2));
+    		glowLineMesh.rotation.z = Math.atan2(mouseyo-Player.shield.body.GetPosition().y,mousexo-Player.shield.body.GetPosition().x) - Math.PI/2;
+    		glowTgtMesh.position.x = mousexo;
+    		glowTgtMesh.position.y = mouseyo;
+    		glowTgtMesh.rotation.z = Math.atan2(mouseyt-mouseyo,mousext-mousexo) - Math.PI/2;
     		/*theContext.strokeStyle = "#55FFFF";
     		theContext.lineWidth = 4;
     		theContext.beginPath();
@@ -81,6 +120,8 @@ function start() {
     	} else if(ready) {
     		world.QueryAABB(throwScan, aabb);
     		ready = false;
+    		glowLineShader.uniforms.active.value = 0.0;
+    		glowTgtShader.uniforms.active.value = 0.0;
     	}
     }
     function throwScan(fixture) {
@@ -144,6 +185,10 @@ function start() {
 			//world.SetDebugDraw(debugDraw);
     function update() {
     	//theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
+    	glowLineMesh.position.x = Player.shield.body.GetPosition().x;
+    	glowLineMesh.position.y = Player.shield.body.GetPosition().y;
+    	
+    	
     	Player.action();
     	for(i = 0; i < objectList.length; i++) {
     		objectList[i].action();

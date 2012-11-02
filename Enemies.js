@@ -1,26 +1,26 @@
 var enemyType = 2945;	//signifies parts
 var enemyShieldType = 3825	//used for ring
 var evers = [	//vertices of all bodies of enemy
-[new b2Vec2(0.025,0.058), new b2Vec2(-.025,0.058), new b2Vec2(-.143,-.060), new b2Vec2(0.143,-.060)],
-[new b2Vec2(0.143,-.060), new b2Vec2(-.143,-.060), new b2Vec2(-.060,-.143), new b2Vec2(0.060,-.143)],
-[new b2Vec2(-.058,0.025), new b2Vec2(-.500,0.210), new b2Vec2(-.500,-.210), new b2Vec2(-.143,-.060)],
-[new b2Vec2(-.025,0.058), new b2Vec2(-.210,0.500), new b2Vec2(-.500,0.210), new b2Vec2(-.058,0.025)],
-[new b2Vec2(0.210,0.500), new b2Vec2(-.210,0.500), new b2Vec2(-.025,0.058), new b2Vec2(0.025,0.058)],
-[new b2Vec2(0.500,0.210), new b2Vec2(0.210,0.500), new b2Vec2(0.025,0.058), new b2Vec2(0.058,0.025)],
-[new b2Vec2(0.500,0.210), new b2Vec2(0.058,0.025), new b2Vec2(0.143,-.060), new b2Vec2(0.500,-.210)],
-[new b2Vec2(0.360,-.151), new b2Vec2(0.151,-.360), new b2Vec2(0.210,-.500), new b2Vec2(0.500,-.210)],
-[new b2Vec2(0.143,-.060), new b2Vec2(0.060,-.143), new b2Vec2(0.151,-.360), new b2Vec2(0.360,-.151)],
-[new b2Vec2(0.151,-.360), new b2Vec2(-.151,-.360), new b2Vec2(-.210,-.500), new b2Vec2(0.210,-.500)],
-[new b2Vec2(0.060,-.143), new b2Vec2(-.060,-.143), new b2Vec2(-.151,-.360), new b2Vec2(0.151,-.360)],
-[new b2Vec2(-.151,-.360), new b2Vec2(-.360,-.151), new b2Vec2(-.500,-.210), new b2Vec2(-.210,-.500)],
-[new b2Vec2(-.060,-.143), new b2Vec2(-.143,-.060), new b2Vec2(-.360,-.151), new b2Vec2(-.151,-.360)],
+[new b2Vec2(0.143,0.060), new b2Vec2(-.143,0.060), new b2Vec2(-.025,-.058), new b2Vec2(0.025,-.058)],
+[new b2Vec2(0.060,0.143), new b2Vec2(-.060,0.143), new b2Vec2(-.143,0.060), new b2Vec2(0.143,0.060)],
+[new b2Vec2(-.143,0.060), new b2Vec2(-.500,0.210), new b2Vec2(-.500,-.210), new b2Vec2(-.058,-.025)],
+[new b2Vec2(-.058,-.025), new b2Vec2(-.500,-.210), new b2Vec2(-.210,-.500), new b2Vec2(-.025,-.058)],
+[new b2Vec2(0.025,-.058), new b2Vec2(-.025,-.058), new b2Vec2(-.210,-.500), new b2Vec2(0.210,-.500)],
+[new b2Vec2(0.058,-.025), new b2Vec2(0.025,-.058), new b2Vec2(0.210,-.500), new b2Vec2(0.500,-.210)],
+[new b2Vec2(0.500,0.210), new b2Vec2(0.143,0.060), new b2Vec2(0.058,-.025), new b2Vec2(0.500,-.210)],
+[new b2Vec2(0.500,0.210), new b2Vec2(0.210,0.500), new b2Vec2(0.151,0.360), new b2Vec2(0.360,0.151)],
+[new b2Vec2(0.360,0.151), new b2Vec2(0.151,0.360), new b2Vec2(0.060,0.143), new b2Vec2(0.143,0.060)],
+[new b2Vec2(0.210,0.500), new b2Vec2(-.210,0.500), new b2Vec2(-.151,0.360), new b2Vec2(0.151,0.360)],
+[new b2Vec2(0.151,0.360), new b2Vec2(-.151,0.360), new b2Vec2(-.060,0.143), new b2Vec2(0.060,0.143)],
+[new b2Vec2(-.210,0.500), new b2Vec2(-.500,0.210), new b2Vec2(-.360,0.151), new b2Vec2(-.151,0.360)],
+[new b2Vec2(-.151,0.360), new b2Vec2(-.360,0.151), new b2Vec2(-.143,0.060), new b2Vec2(-.060,0.143)],
 ];
 var sizeup = false;
 
 var anEnemy = {
-	"size" : 3.5,	//controls size
+	"size" : 2,	//controls size
 	"thrustMod" : 10000,	//maximum thrust force in any direction
-	"maxHealth" : 500,	//maximum health
+	"maxHealth" : 50,	//maximum health
 	"health" : 0,	//health
 	"shield" : null,	//holds "forcefield", also what holds enemy together
 	"parts" : null,	//parts comprising enemy, parts[0] position used as enemy center
@@ -41,7 +41,7 @@ var anEnemy = {
 		this.shield = makeObject(enemyShieldType, x, y, 0, this.size * 0.65);
 		this.shield.data = this;
 		for(i = 0; i < evers.length; i++) {
-			this.parts.push(makeObject(enemyType, x, y, 0, evers[i]));
+			this.parts.push(makeObject(enemyType, x, y, i, evers[i]));
 			objectList.push(this.parts[i]);
 			jdef.Initialize(this.shield.body, this.parts[i].body, this.shield.body.GetWorldCenter());
 			jdef.collideConnected = false;
@@ -63,10 +63,12 @@ var anEnemy = {
 			this.shield.mesh.position.x = this.shield.body.GetPosition().x;
 			this.shield.mesh.position.y = this.shield.body.GetPosition().y;
 			this.shield.shader.uniforms.strength.value = this.shield.timer / 30.0;
-			var dx = Player.shield.body.GetPosition().x - this.shield.body.GetPosition().x;
-			var dy = Player.shield.body.GetPosition().y - this.shield.body.GetPosition().y;
-			var mag = Math.sqrt(dx*dx+dy*dy);
-			this.shield.ctrForce(new b2Vec2(dx*1000/mag,dy*1000/mag));
+			if(Player.alive) {
+				var dx = Player.shield.body.GetPosition().x - this.shield.body.GetPosition().x;
+				var dy = Player.shield.body.GetPosition().y - this.shield.body.GetPosition().y;
+				var mag = Math.sqrt(dx*dx+dy*dy);
+				this.shield.ctrForce(new b2Vec2(dx*1000/mag,dy*1000/mag));
+			}
 			if(this.shield.timer > 0) {
 				this.shield.timer--;
 			}

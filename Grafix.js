@@ -1,6 +1,6 @@
 function startGL() {	//starts the WebGL program
       container = document.getElementById("container");
-      rengl = new THREE.WebGLRenderer({antialias: true});
+      rengl = new THREE.WebGLRenderer({antialias: true, premultipliedAlpha: false});
       rengl.setClearColorHex(0x000000,1);
       rengl.setSize(container.offsetWidth, container.offsetHeight);
       container.appendChild(rengl.domElement);
@@ -24,6 +24,8 @@ function startGL() {	//starts the WebGL program
 	shape = new THREE.Mesh(geometry, redMat);
 	scene.add(shape);
 	*/
+	
+	
 }
 
 function loadShaders() {
@@ -31,4 +33,12 @@ function loadShaders() {
 	fShieldShader = document.getElementById("fShieldShader").innerHTML;
 	vCrateShader = document.getElementById("vCrateShader").innerHTML;
 	fCrateShader = document.getElementById("fCrateShader").innerHTML;
+	vGlassShader = document.getElementById("vGlassShader").innerHTML;
+	fGlassShader = document.getElementById("fGlassShader").innerHTML;
+	vGreyShader = document.getElementById("vGreyShader").innerHTML;
+	fGreyShader = document.getElementById("fGreyShader").innerHTML;
+	vRedShader = document.getElementById("vRedShader").innerHTML;
+	fRedShader = document.getElementById("fRedShader").innerHTML;
+	vGlowLine = document.getElementById("vGlowLine").innerHTML;
+	fGlowLine = document.getElementById("fGlowLine").innerHTML;
 }
