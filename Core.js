@@ -54,7 +54,9 @@ function start() {
     	},
     	attributes : {},
     	vertexShader : vGlowLine,
-    	fragmentShader : fGlowLine
+    	fragmentShader : fGlowLine,
+			//blend: THREE.AdditiveBlending,
+			//transparent: true
     });
     var glowTgtShader = new THREE.ShaderMaterial({
     	uniforms : {
@@ -63,8 +65,26 @@ function start() {
     	},
     	attributes : {},
     	vertexShader : vGlowLine,
-    	fragmentShader : fGlowLine
+    	fragmentShader : fGlowLine,
+			//blend: THREE.AdditiveBlending,
+			//transparent: true
     });
+    var glowBubShader = new THREE.ShaderMaterial({
+		uniforms: {'strength' : {'type' : 'f', 'value' : 0},'radius' : {'type' : 'f', 'value' : grabRadius}},
+		attributes: {},
+		vertexShader: vShieldShader,
+		fragmentShader: fShieldShader,
+			//blend: THREE.AdditiveBlending,
+			//transparent: true
+	});
+    var glwbubgeo = new THREE.Geometry();
+	glwbubgeo.vertices.push(new THREE.Vector3(0,0,99));
+	glwbubgeo.vertices.push(new THREE.Vector3(grabRadius,0,99));
+	for(i = 1; i < 50; i++){
+		glwbubgeo.vertices.push(new THREE.Vector3(grabRadius*Math.cos(i*Math.PI/25),grabRadius*Math.sin(i*Math.PI/25),0,99));
+		glwbubgeo.faces.push(new THREE.Face3(0,i,i+1));
+	}
+	glwbubgeo.faces.push(new THREE.Face3(0,50,1));
     var glwgeo = new THREE.Geometry();
     glwgeo.vertices.push(new THREE.Vector3(0.5,0,95));
     glwgeo.vertices.push(new THREE.Vector3(0.5,1,95));
@@ -73,16 +93,58 @@ function start() {
     glwgeo.faces.push(new THREE.Face4(0,1,2,3));
     var glowLineMesh = new THREE.Mesh(glwgeo,glowLineShader);
     var glowTgtMesh = new THREE.Mesh(glwgeo,glowTgtShader);
+    var glowBub = new THREE.Mesh(glwbubgeo, glowBubShader);
     scene.add(glowLineMesh);
     scene.add(glowTgtMesh);
+    scene.add(glowBub);
     
-    //TODO: FINAL LIST
-    //TODO: HEALTH BAR
-    //TODO: KILL TALLY
-    //TODO: BUBBLE FOR GRAVITY LAUNCHER
-    //TODO: INCORPORATE STARFIELD IF SULI MADE ONE
+    var hpgeo1 = new THREE.Geometry();
+    hpgeo1.vertices.push(new THREE.Vector3(1,0,97));
+    hpgeo1.vertices.push(new THREE.Vector3(1,50,97));
+    hpgeo1.vertices.push(new THREE.Vector3(-1,50,97));
+    hpgeo1.vertices.push(new THREE.Vector3(-1,0,97));
+    hpgeo1.faces.push(new THREE.Face4(0,1,2,3));
+    var hpgeo2 = new THREE.Geometry();
+    hpgeo2.vertices.push(new THREE.Vector3(0.5,0,98.5));
+    hpgeo2.vertices.push(new THREE.Vector3(0.5,1,98.5));
+    hpgeo2.vertices.push(new THREE.Vector3(-0.5,1,98.5));
+    hpgeo2.vertices.push(new THREE.Vector3(-0.5,0,98.5));
+    hpgeo2.faces.push(new THREE.Face4(0,1,2,3));
+	hBarBackShader = new THREE.ShaderMaterial({
+		uniforms: {
+			theta : {type : 'f', value : -Math.PI/2},
+			size : {type : 'f', value : Player.size},
+			v1 : {type : 'v2', value : new THREE.Vector2(1,0)},
+			v2 : {type : 'v2', value : new THREE.Vector2(1,50)},
+			v3 : {type : 'v2', value : new THREE.Vector2(-1,50)},
+			v4 : {type : 'v2', value : new THREE.Vector2(-1,0)},
+			},
+		attributes: {},
+		vertexShader: vGreyShader,
+		fragmentShader: fGreyShader
+	});
+	var hBarShader = new THREE.ShaderMaterial({
+    	uniforms : {
+    		length : {type : 'f', value : 50},
+    		active : {type : 'f', value : 1}
+    	},
+    	attributes : {},
+    	vertexShader : vGlowLine,
+    	fragmentShader : fGlowLine
+    });
+	var hBarBack = new THREE.Mesh(hpgeo1,hBarBackShader);
+	var hBar = new THREE.Mesh(hpgeo2,hBarShader);
+	scene.add(hBar);
+	scene.add(hBarBack);
+	hBarBack.position.x = -74;
+	hBar.position.x = -74;
+	hBarBack.position.y = 23;
+	hBar.position.y = 23;
+	hBarBack.rotation.z = -Math.PI/2;
+	hBar.rotation.z = -Math.PI/2;
     
     function listen() {//account for effects of EventListeners
+    	if(Player.alive) {
     	if(click) {
     		mousexo = mousex;
     		mouseyo = mousey;
@@ -93,6 +155,7 @@ function start() {
     	} else if(mouseDown) {
     		glowLineShader.uniforms.active.value = 1.0;
     		glowTgtShader.uniforms.active.value = 1.0;
+    		glowBubShader.uniforms.strength.value = 0.6;
     		max = launchMax/launchMult;
     		mag = Math.sqrt(Math.pow(mousex-mousexo,2)+Math.pow(mousey-mouseyo,2));
     		if(mag <= max) {
@@ -108,6 +171,8 @@ function start() {
     		glowTgtMesh.position.x = mousexo;
     		glowTgtMesh.position.y = mouseyo;
     		glowTgtMesh.rotation.z = Math.atan2(mouseyt-mouseyo,mousext-mousexo) - Math.PI/2;
+    		glowBub.position.x = mousexo;
+    		glowBub.position.y = mouseyo;
     		/*theContext.strokeStyle = "#55FFFF";
     		theContext.lineWidth = 4;
     		theContext.beginPath();
@@ -122,6 +187,8 @@ function start() {
     		ready = false;
     		glowLineShader.uniforms.active.value = 0.0;
     		glowTgtShader.uniforms.active.value = 0.0;
+    		glowBubShader.uniforms.strength.value = 0.0;
+    	}
     	}
     }
     function throwScan(fixture) {
@@ -140,9 +207,9 @@ function start() {
     	b1 = contact.GetFixtureA().GetBody().GetUserData();
     	b2 = contact.GetFixtureB().GetBody().GetUserData();
     	if(b1.type == playerShieldType) {damage(b1,b2,impulse);}
-    	else if(b2.type == playerShieldType) {damage(b2,b1,impulse);}
-    	else if(b1.type == enemyShieldType) {damage(b1,b2,impulse);}
-    	else if(b2.type == enemyShieldType) {damage(b2,b1,impulse);}
+    	if(b2.type == playerShieldType) {damage(b2,b1,impulse);}
+    	if(b1.type == enemyShieldType) {damage(b1,b2,impulse);}
+    	if(b2.type == enemyShieldType) {damage(b2,b1,impulse);}
     }
     collider.PreSolve = function(contact, oldManifold) {}
     this.world.SetContactListener(collider);
@@ -173,7 +240,7 @@ function start() {
     
     
     
-         
+         makeParticles();
     Player.init();
     
          /*var debugDraw = new b2DebugDraw();
@@ -185,9 +252,10 @@ function start() {
 			//world.SetDebugDraw(debugDraw);
     function update() {
     	//theContext.clearRect(0, 0, theCanvas.width, theCanvas.height);
+    	if(Player.alive) {
     	glowLineMesh.position.x = Player.shield.body.GetPosition().x;
     	glowLineMesh.position.y = Player.shield.body.GetPosition().y;
-    	
+    	}
     	
     	Player.action();
     	for(i = 0; i < objectList.length; i++) {
@@ -231,6 +299,10 @@ function start() {
     	//Player.draw();
     	//TODO: Click stuff
     	runEvents();
+    	if(Player.health > 0) {
+    		hBarShader.uniforms.active.value = 1;
+    		hBarShader.uniforms.length.value = 50*Player.health/Player.maxHealth;
+    	} else {hBarShader.uniforms.active.value = 0;}
     	
     	
     	/*
@@ -238,7 +310,7 @@ function start() {
     	shape.position.x = mousex;
     	shape.position.y = mousey;*/
     	rengl.render(scene, camera);
-    	
+    	particleUpdate();
     	
     	reqFrame(update);	//set up another iteration
     }

@@ -79,3 +79,8 @@ var vGlassShader;
 var fGlassShader;
 var vGlowLine;
 var fGlowLine;
+var particles;
+var particleSystem;
+var pCount;
+var pVel = [];
+var score = 0;

@@ -224,7 +224,9 @@ function makeObject(type, x, y, theta, dims) {	//creates an object with the spec
 			uniforms: {'strength' : {'type' : 'f', 'value' : 0.5+obj.timer/60.0},'radius' : {'type' : 'f', 'value' : dims}},
 			attributes: {},
 			vertexShader: vShieldShader,
-			fragmentShader: fShieldShader
+			fragmentShader: fShieldShader,
+			//blend: THREE.AdditiveBlending,
+			transparent: true
 		});
 		obj.mesh = new THREE.Mesh(geometry,obj.shader);//new THREE.MeshBasicMaterial({color: 0xFFFFFF}));
 		scene.add(obj.mesh);
@@ -235,10 +237,10 @@ function makeObject(type, x, y, theta, dims) {	//creates an object with the spec
 		obj.indepObject = false;
 		fdef.shape = new b2CircleShape(dims);
 		var geometry = new THREE.Geometry();
-		geometry.vertices.push(new THREE.Vector3(0,0,99));
-		geometry.vertices.push(new THREE.Vector3(dims,0,99));
+		geometry.vertices.push(new THREE.Vector3(0,0,95));
+		geometry.vertices.push(new THREE.Vector3(dims,0,95));
 		for(i = 1; i < 50; i++){
-			geometry.vertices.push(new THREE.Vector3(dims*Math.cos(i*Math.PI/25),dims*Math.sin(i*Math.PI/25),0,99));
+			geometry.vertices.push(new THREE.Vector3(dims*Math.cos(i*Math.PI/25),dims*Math.sin(i*Math.PI/25),0,95));
 			geometry.faces.push(new THREE.Face3(0,i,i+1));
 		}
 		geometry.faces.push(new THREE.Face3(0,50,1));
@@ -246,7 +248,9 @@ function makeObject(type, x, y, theta, dims) {	//creates an object with the spec
 			uniforms: {'strength' : {'type' : 'f', 'value' : 0.5+obj.timer/60.0},'radius' : {'type' : 'f', 'value' : dims}},
 			attributes: {},
 			vertexShader: vShieldShader,
-			fragmentShader: fShieldShader
+			fragmentShader: fShieldShader,
+			//blend: THREE.AdditiveBlending,
+			//transparent: true
 		});
 		obj.mesh = new THREE.Mesh(geometry,obj.shader);//new THREE.MeshBasicMaterial({color: 0xFFFFFF}));
 		scene.add(obj.mesh);
@@ -280,11 +284,6 @@ function makeObject(type, x, y, theta, dims) {	//creates an object with the spec
 			}
 		}*/
 		
-		
-		
-		
-		//obj.mesh = new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({color: 0xFFFFFF}));
-		
 		obj.shader = new THREE.ShaderMaterial({
 			uniforms: {'theta' : {'type' : 'f', 'value' : theta},'hwidth' : {'type' : 'f', 'value' : dims[0]/2}, 'hheight' : {'type' : 'f', 'value' : dims[1]/2}},
 			attributes: {},
@@ -317,6 +316,7 @@ function damage(b1, b2, impulse) {
 		var imp = impulse.normalImpulses;
 		b1.data.shield.timer = 30;
 		var dt = eDamageThreshold;
+		if(b2.type == playerShieldType) {dt = dt * 10;}	//player hits don't hurt the enemies unless they're HUGE
 		if(b2.type == enemyShieldType) {dt = dt * 6;}	//dumbass enemy protection
 		var hit = Math.sqrt(imp[0]*imp[0]+imp[1]*imp[1])/1000-dt;
 		if(hit > 0) {

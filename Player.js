@@ -53,7 +53,7 @@ var pvers = [	//vertices of all bodies of player
 var Player = {
 	"size" : 3.5,	//controls size of player
 	"thrustMod" : 10000,	//maximum thrust force in any direction
-	"maxHealth" : 500,	//player maximum health
+	"maxHealth" : 2000,	//player maximum health
 	"health" : 0,	//player health
 	"shield" : null,	//holds player "forcefield", also what holds player together
 	"parts" : [],	//parts comprising player, parts[0] position used as player center
@@ -198,7 +198,7 @@ var Player = {
 			temp.Add(pvers[i][1]);
 			temp.Add(pvers[i][2]);
 			temp.Add(pvers[i][3]);
-			temp.Multiply((Math.random())*this.parts[i].body.GetMass());
+			temp.Multiply((Math.random())*this.parts[i].body.GetMass()*10);
 			this.parts[i].ctrForce(temp);
 			this.parts[i].indepObject = true;
 		}

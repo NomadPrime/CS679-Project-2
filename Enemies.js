@@ -124,10 +124,11 @@ var anEnemy = {
 			temp.Add(evers[i][1]);
 			temp.Add(evers[i][2]);
 			temp.Add(evers[i][3]);
-			temp.Multiply((Math.random())*this.parts[i].body.GetMass());
+			temp.Multiply((Math.random())*this.parts[i].body.GetMass()*10);
 			this.parts[i].ctrForce(temp);
 		}
 		this.parts = [];
+		pointGain();
 		purgeFlag = true;
 		
 		//this.init(Math.random()*50, Math.random()*150);
