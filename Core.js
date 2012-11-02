@@ -114,10 +114,15 @@ function start() {
 		context.arc(0,0,1,0, Math.PI*2, true);
 		context.fill();
 	}
+	
+	//I hope I could find more realistic star icon....
+	var texture = THREE.ImageUtils.loadTexture('single_star.png', function(){
+	rengl.render(bgScene)});
 	function makeParticles() {
 	var particle, material;
 	for (var zpos = -1000; zpos < 1000; zpos += 20){
-		material = new THREE.ParticleCanvasMaterial( {color: 0xffffff, program: particleRender});
+		//material = new THREE.ParticleCanvasMaterial( {color: 0xffffff, program: particleRender});
+		material = new THREE.ParticleCanvasMaterial( {map:texture});
 		particle = new THREE.Particle(material);
 		
 		particle.position.x = Math.random() * 1000 - 500;
